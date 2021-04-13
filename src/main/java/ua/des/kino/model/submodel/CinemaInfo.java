@@ -34,6 +34,6 @@ public class CinemaInfo implements Serializable {
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "id", referencedColumnName = "cinema_id")
+    @JoinColumn(name = "id", referencedColumnName = "id")
     private Cinema cinema;
 }

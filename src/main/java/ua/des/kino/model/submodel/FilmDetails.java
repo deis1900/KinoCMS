@@ -44,7 +44,7 @@ public class FilmDetails implements Serializable {
     private Genres genres;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "film_id", nullable = true)
+    @JoinColumn(name = "film_id")
     private List<Photo> photos;
 
     @OneToOne
