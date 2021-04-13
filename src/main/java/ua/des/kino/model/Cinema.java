@@ -22,7 +22,8 @@ public class Cinema {
     @Column(name = "main_photo")
     private String mainPhoto;
 
-    @OneToOne(mappedBy = "cinema", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // Lazy
+    @OneToOne(mappedBy = "cinema", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn
     private CinemaInfo cinemaInfo;
 

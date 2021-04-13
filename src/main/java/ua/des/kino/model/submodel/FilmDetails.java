@@ -1,5 +1,6 @@
 package ua.des.kino.model.submodel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import ua.des.kino.model.Film;
 
@@ -40,16 +41,20 @@ public class FilmDetails implements Serializable {
     @Column
     private Integer budget;
 
+    @Enumerated
+    private Quality quality;
+
     @Enumerated(EnumType.STRING)
     private Genres genres;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "film_id")
     private List<Photo> photos;
 
     @OneToOne
     @MapsId
     @JoinColumn(name = "film_id")
+    @JsonIgnore
     private Film film;
 
 }
