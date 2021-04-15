@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class UserContact implements Serializable {
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id", updatable = false, nullable = false)
     private Long id;
 
     @Column
@@ -33,8 +33,8 @@ public class UserContact implements Serializable {
     @Column
     private String card;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "user_id")
+    @OneToOne(fetch = FetchType.LAZY)
+//    @MapsId
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

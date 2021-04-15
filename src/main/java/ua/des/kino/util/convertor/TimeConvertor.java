@@ -13,7 +13,7 @@ public class TimeConvertor {
 
     private final static Logger logger = LoggerFactory.getLogger(TimeConvertor.class.getName());
 
-    public List<Timestamp> convert(String[] strings){
+    public List<Timestamp> convertToTimestamp(String[] strings){
         List<Timestamp> sqlDate = new ArrayList<>();
 
         for(String str: strings) {

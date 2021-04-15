@@ -26,7 +26,5 @@ public class Ticket implements Serializable {
     @ManyToOne
     private Booking booking;
 
-    public Ticket() {
-
-    }
+    public Ticket() { }
 }

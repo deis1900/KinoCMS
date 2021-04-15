@@ -16,7 +16,7 @@ public class Session implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "show_time", unique = true, columnDefinition = "TIMESTAMP")
+    @Column(name = "show_time", columnDefinition = "TIMESTAMP")
     private LocalDateTime showTime;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.REFRESH, orphanRemoval = true)
@@ -25,7 +25,7 @@ public class Session implements Serializable {
     @OneToOne
     private Film film;
 
-    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "session", cascade = {CascadeType.REMOVE, CascadeType.REFRESH})
     private Set<Ticket> ticket;
 
 }

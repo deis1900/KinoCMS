@@ -6,8 +6,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
-//@Entity
-//@Table(name = "seo")
+@Entity
+@Table(name = "seo")
 public class SeoBlock implements Serializable {
 
     @Id

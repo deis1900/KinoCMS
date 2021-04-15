@@ -22,7 +22,7 @@ public class News {
     private String info;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "news_id", nullable = true)
+    @JoinColumn(name = "news_id")
     private List<Photo> photos;
 
     @Column

@@ -18,14 +18,17 @@ public class Seo {
     private Long ownerId;
 
     @Enumerated
-    private SeoType type;
+    private SeoType  type;
 
     @Column
     private String url;
 
+    @Column
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String keyword;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 }

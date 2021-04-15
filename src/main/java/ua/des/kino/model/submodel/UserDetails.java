@@ -14,7 +14,7 @@ import java.util.Date;
 public class UserDetails implements Serializable {
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id", updatable = false, nullable = false)
     private Long id;
 
     @Enumerated(EnumType.STRING)
