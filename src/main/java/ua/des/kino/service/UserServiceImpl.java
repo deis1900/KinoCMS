@@ -3,8 +3,8 @@ package ua.des.kino.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.des.kino.model.User;
-import ua.des.kino.repository.UserRepository;
-import ua.des.kino.util.exception_handler.session.NoSuchElementFoundException;
+import ua.des.kino.daos.repository.user.UserRepository;
+import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public List<User> getAll() {
+    public List<User> findAll() {
         return repository.findAll();
     }
 
@@ -58,6 +58,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(Long id) {
-
+        repository.deleteById(id);
     }
+
 }

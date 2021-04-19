@@ -14,7 +14,7 @@ public interface UserService {
 
     User getById(Long id);
 
-    List<User> getAll();
+    List<User> findAll();
 
     void save(User user);
 

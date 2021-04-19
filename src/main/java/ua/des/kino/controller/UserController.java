@@ -1,5 +1,8 @@
 package ua.des.kino.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -10,10 +13,12 @@ import ua.des.kino.model.User;
 import ua.des.kino.service.UserService;
 import ua.des.kino.util.CustomErrorType;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "user")
+@Tag(name="User_Controller", description="Communicate with customers.")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class.getName());
@@ -24,27 +29,47 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Operation(
+            summary = "get user by id",
+            description = "."
+    )
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<User> getUserById(@PathVariable("id")
+                                                @Parameter(description = "Descriptor user") Long id) {
+        logger.info("Get user with id: " + id);
         return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{login}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> getUserById(String login) {
+    @Operation(
+            summary = "get user by login",
+            description = "."
+    )
+    @GetMapping(value = "/name/{login}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> getUserByLogin(@PathVariable
+                                                           @Parameter(description = "User login.") String login) {
         return new ResponseEntity<>(userService.getByLogin(login), HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "get all customer",
+            description = "."
+    )
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAll();
+        List<User> users = userService.findAll();
         if (users.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/ ", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> postCustomer(@RequestBody User user) {
+    @Operation(
+            summary = "save customer",
+            description = "."
+    )
+    @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> postCustomer(@Valid @RequestBody
+                                                      @Parameter(description = "Generated user.") User user) {
         System.out.println("Creating User " + user.getLogin());
         if (userService.isUserExist(user)) {
             logger.error("login already exist " + user.getLogin());
@@ -56,8 +81,12 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "update customer",
+            description = "Save and flush user to db."
+    )
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable("id") Long id, @RequestBody User user) {
+    public ResponseEntity<?> updateCustomer(@PathVariable("id") Long id, @Valid @RequestBody User user) {
 
         logger.info("Update user with id " + id);
         User userDB = userService.getById(id);
@@ -74,6 +103,10 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @Operation(
+            summary = "delete user",
+            description = "Delete Customer from database by id."
+    )
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<User> deleteCustomer(@PathVariable("id") Long id) {
         logger.info("Fetching & Deleting User with id " + id);

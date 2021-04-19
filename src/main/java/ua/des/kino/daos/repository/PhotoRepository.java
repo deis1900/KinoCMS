@@ -1,4 +1,4 @@
-package ua.des.kino.repository;
+package ua.des.kino.daos.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,8 @@
 package ua.des.kino.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +12,11 @@ import ua.des.kino.service.util.PhotoService;
 
 @RestController
 @RequestMapping(value = "/admin")
+@Tag(name="Admin_Controller", description="Manage other options for admin panel.")
 public class AdminController {
+
+    @Value("${upload.path}")
+    private String uploadPath;
 
     private final PhotoService photoService;
 
@@ -18,11 +24,19 @@ public class AdminController {
         this.photoService = photoService;
     }
 
+    @Operation(
+            summary = "get photo by id",
+            description = "find photo by id of the photo"
+    )
     @GetMapping(value = "/photo/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Photo> getPhotoByNameAndType(@PathVariable Long id) {
         return new ResponseEntity<>(photoService.getPhotoById(id), HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "get photo by name and type of Page",
+            description = "Find photo for page and name of the photo"
+    )
     @GetMapping(value = {"/get/photo/{name}", "/get/photo/byType"},
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPhotoByNameAndType(
@@ -39,10 +53,13 @@ public class AdminController {
         return new ResponseEntity<>(photoService.getPhotoByNameAndType(name, type), HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "save photo",
+            description = "Downloading, convert snd save to database Photo files."
+    )
     @PostMapping(value = "/save/photo")
     public ResponseEntity<?> savePhoto(Photo photo) {
         photoService.save(photo);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }
