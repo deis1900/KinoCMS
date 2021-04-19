@@ -1,4 +1,4 @@
-package ua.des.kino.util.exception_handler.session;
+package ua.des.kino.util.exception_handler;
 
 public class NoSuchElementFoundException extends RuntimeException {
 
