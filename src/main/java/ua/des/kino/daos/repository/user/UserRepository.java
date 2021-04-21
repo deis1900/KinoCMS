@@ -1,4 +1,4 @@
-package ua.des.kino.repository;
+package ua.des.kino.daos.repository.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,5 +12,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByLoginAndPassword(String login, String password);
 
-    Optional<User> getUserByLogin(String login);
+    Optional<User> findUserByLogin(String login);
+
 }

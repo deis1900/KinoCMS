@@ -1,60 +1,53 @@
 package ua.des.kino.model.submodel;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import ua.des.kino.model.Film;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.List;
 
 @Data
-@Entity
-@Table(name = "films_details")
+@Embeddable
 public class FilmDetails implements Serializable {
 
-    @Id
-    @Column(name = "film_id")
-    private Long id;
-
-    @Column
+    @Column(table = "films_details")
     private String actors;
 
-    @Column(columnDefinition = "TEXT")
+    @NotEmpty
+    @Column(table = "films_details", columnDefinition = "TEXT")
     private String info;
 
-    @Column
+    @Column(table = "films_details")
     private String director;
 
-    @Column
+    @Column(table = "films_details")
     private String producer;
 
-    @Column
+    @Column(table = "films_details")
     private String compositor;
 
-    @Column
+    @Column(table = "films_details")
     private String scenarist;
 
-    @Column
+    @Column(table = "films_details")
     private String trailer;
 
-    @Column
+    @Column(table = "films_details")
     private Integer budget;
 
+    @NotBlank(message = "Quality is mandatory")
+    @Column(table = "films_details")
     @Enumerated
     private Quality quality;
 
+    @NotBlank(message = "Genre is mandatory")
     @Enumerated(EnumType.STRING)
     private Genres genres;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "film_id")
     private List<Photo> photos;
-
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "film_id")
-    @JsonIgnore
-    private Film film;
 
 }

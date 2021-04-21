@@ -37,7 +37,9 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable("id")
                                                 @Parameter(description = "Descriptor user") Long id) {
         logger.info("Get user with id: " + id);
-        return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
+        return new ResponseEntity<>(
+                userService.getById(id),
+                HttpStatus.OK);
     }
 
     @Operation(
@@ -70,15 +72,14 @@ public class UserController {
     @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> postCustomer(@Valid @RequestBody
                                                       @Parameter(description = "Generated user.") User user) {
-        System.out.println("Creating User " + user.getLogin());
+        logger.info("Creating User " + user.getLogin());
         if (userService.isUserExist(user)) {
             logger.error("login already exist " + user.getLogin());
             return new ResponseEntity<>(
                     new CustomErrorType("user with login " + user.getLogin() + " already exist!"),
                     HttpStatus.CONFLICT);
         }
-        userService.save(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
     }
 
     @Operation(
@@ -96,7 +97,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         if (user.equals(userService.getById(user.getId()))) {
-            System.out.println("A User with " + user.getId() + " already exist ");
+            logger.error("A User with " + user.getId() + " already exist ");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         userService.updateUser(user);

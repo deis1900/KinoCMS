@@ -25,6 +25,12 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     @Transactional
+    public boolean isExists(Photo photo) {
+        return photoRepository.existsByUrl(photo.getUrl());
+    }
+
+    @Override
+    @Transactional
     public Photo getPhotoByNameAndType(String name, String type) {
         return photoRepository.getPhotoByNameAndTypePhotos(name, type).orElseThrow(() ->
                 new NoSuchElementFoundException("Photo with name: " + name + " & type " +type, new Throwable()));
@@ -46,5 +52,23 @@ public class PhotoServiceImpl implements PhotoService {
     @Transactional
     public Photo getPhotoById(Long id){
         return photoRepository.getOne(id);
+    }
+
+    @Override
+    @Transactional
+    public Photo update(Photo photo) {
+        return photoRepository.saveAndFlush(photo);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        photoRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllByName(String name) {
+        photoRepository.deleteAllByName(name);
     }
 }

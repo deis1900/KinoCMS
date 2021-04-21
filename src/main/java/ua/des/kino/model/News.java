@@ -6,6 +6,7 @@ import ua.des.kino.model.submodel.NewsType;
 import ua.des.kino.model.submodel.Photo;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -29,10 +30,10 @@ public class News {
     private Boolean state;
 
     @Column
-    private Date startDate;
+    private LocalDateTime startDate;
 
     @Column
-    private Date finishDate;
+    private LocalDateTime finishDate;
 
     @OneToMany
     @JoinColumn(name = "owner_id", referencedColumnName = "id")

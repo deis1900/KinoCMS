@@ -140,14 +140,13 @@ public class JdbcTest {
                     "SELECT * FROM kino.sessions AS s " +
                     "RIGHT JOIN kino.tickets AS t " +
                     "ON (SELECT COUNT(session_id) FROM kino.tickets) " +
-                    "ORDER BY s.film_film_id;");
+                    "ORDER BY s.film_id;");
             while (rs.next()) {
                 System.out.println(
                         "" + rs.getRow() + ". " +
                                 "|| ticket_id = " + rs.getInt("id") +
                                 "   || film_id  = " + rs.getString("film_film_id") +
                                 "   || show_time  = " + rs.getDate("show_time"));
-//                TODO add rows
                 actual.add(rs.getInt("film_film_id"));
             }
         } catch (SQLException e) {
@@ -164,7 +163,7 @@ public class JdbcTest {
         try {
             ResultSet rs = statement.executeQuery(
                     "SELECT id, show_time, seat_id,\n" +
-                            "(SELECT name FROM kino.films WHERE film_film_id = film_id) AS films,\n" +
+                            "(SELECT name FROM kino.films WHERE id = film_id) AS films,\n" +
                             "(SELECT series FROM kino.seats AS s WHERE seat_id = s.id) AS series,\n" +
                             "(SELECT place FROM kino.seats AS s WHERE seat_id = s.id) AS place\n" +
                             "FROM kino.sessions \n" +

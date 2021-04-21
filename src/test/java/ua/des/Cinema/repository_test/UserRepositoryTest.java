@@ -7,53 +7,87 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import ua.des.kino.CinemaApplication;
 import ua.des.kino.model.User;
 import ua.des.kino.model.submodel.Sex;
 import ua.des.kino.model.submodel.UserContact;
+import ua.des.kino.daos.repository.user.UserRepository;
 import ua.des.kino.model.submodel.UserDetails;
-import ua.des.kino.repository.UserRepository;
-import java.util.Date;
+import ua.des.kino.model.submodel.UserLang;
+
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CinemaApplication.class)
+@Transactional
 public class UserRepositoryTest {
+    private Long id = -1L;
 
     @Autowired
     private UserRepository repository;
 
     @Before
-    public void saveTest() {
+    public void init() {
         repository.save(newUser());
-
-        Optional<User> queryResult = repository.getUserByLogin("DannyTest");
+        Optional<User> queryResult = repository.findUserByLogin("DannyTest");
         assertFalse(queryResult.isEmpty());
-    }
-
-    @Test
-    public void findByLoginAndPassword() {
-        String password = "TestPass";
-        String login = "DannyTest";
-        List<User> queryResult =repository.findByLoginAndPassword(login, password);
-        assertFalse(queryResult.isEmpty());
-        assertNotNull(queryResult.get(0));
-        assertEquals(login, queryResult.get(0).getLogin());
+        id = queryResult.get().getId();
     }
 
     @After
-    public void deleteUser() {
+    public void clean() {
         repository.delete(newUser());
+        repository.deleteById(id);
     }
 
-    private User newUser() {
+    @Test
+    public void findByLoginAndPasswordTest() {
+        String password = "TestPass";
+        String login = "DannyTest";
+        List<User> queryResult = repository.findByLoginAndPassword(login, password);
+        assertFalse(queryResult.isEmpty());
+        assertNotNull(queryResult.get(0));
+        assertEquals(login, queryResult.get(0).getLogin());
+        Arrays.toString(queryResult.toArray());
+    }
+
+    @Test
+    public void findContactDataTest() {
+        Optional<User> actualUser = repository.findUserByLogin("DannyTest");
+        assertTrue(actualUser.isPresent());
+        assertNotNull(actualUser.get().getContact());
+
+        UserContact actual = actualUser.get().getContact();
+        System.out.println(actual.toString());
+        repository.deleteById(actualUser.get().getId());
+        assertEquals(newUser().getContact(), actual);
+    }
+
+    @Test
+    public void findDetailsDataTest() {
+        Optional<User> actualUser = repository.findUserByLogin("DannyTest");
+        assertTrue(actualUser.isPresent());
+        assertNotNull(actualUser.get().getDetails());
+
+        UserDetails expected = newUser().getDetails();
+        UserDetails actual = actualUser.get().getDetails();
+
+        System.out.println("\n" + actual.toString() + "\n");
+        repository.deleteById(actualUser.get().getId());
+        assertEquals(expected, actual);
+    }
+
+    private static User newUser() {
         UserContact contact = new UserContact();
-        contact.setId(12L);
         contact.setAddress("TestAddress");
         contact.setCard("0000-0000-0000-0000");
         contact.setEmail("danny@Test.com");
@@ -62,20 +96,16 @@ public class UserRepositoryTest {
         contact.setSurname("Test");
 
         UserDetails details = new UserDetails();
-        details.setId(12L);
-        details.setBirthday(new Date());
+        details.setBirthday(LocalDate.of(1999, 12, 21));
         details.setCity("Mexico");
-        details.setLanguage("EN");
+        details.setLanguage(UserLang.RU);
         details.setSex(Sex.MAN);
 
         User user = new User();
-        contact.setUser(user);
-        details.setUser(user);
-        user.setId(12L);
         user.setLogin("DannyTest");
         user.setPassword("TestPass");
-        user.setContact(new UserContact());
-        user.setDetails(new UserDetails());
+        user.setContact(contact);
+        user.setDetails(details);
         return user;
     }
 }

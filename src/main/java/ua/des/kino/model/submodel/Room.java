@@ -1,15 +1,23 @@
 package ua.des.kino.model.submodel;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ua.des.kino.model.Cinema;
 import ua.des.kino.model.Seat;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "rooms")
 public class Room implements Serializable {
@@ -34,11 +42,39 @@ public class Room implements Serializable {
     @JoinColumn(name = "room_id")
     private List<Photo> photoList;
 
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "cinema_id")
     @ManyToOne
     @JoinColumn(name = "cinema_id", nullable = false)
     private Cinema cinema;
 
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private Set<Seat> seats;
 
+    @Override
+    public String toString() {
+        return "Room{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", info='" + info + '\'' +
+                ", banner='" + banner + '\'' +
+                ", roomSchema='" + roomSchema + '\'' +
+                ", photoList=" + photoList +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Room room = (Room) o;
+        return Objects.equals(id, room.id) && Objects.equals(name, room.name)
+                && Objects.equals(info, room.info) && Objects.equals(banner, room.banner)
+                && Objects.equals(roomSchema, room.roomSchema) && Objects.equals(photoList, room.photoList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, info, banner, roomSchema, photoList);
+    }
 }

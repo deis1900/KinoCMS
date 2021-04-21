@@ -10,9 +10,13 @@ import java.util.Optional;
 @Repository
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
 
+    boolean existsByUrl(String url);
+
     Optional<Photo> getPhotoByNameAndTypePhotos(String name, String type);
 
     List<Photo> getPhotosByName(String name);
 
     List<Photo> getPhotosByTypePhotos(String type);
+
+    void deleteAllByName(String name);
 }

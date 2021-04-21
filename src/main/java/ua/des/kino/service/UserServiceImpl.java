@@ -1,9 +1,12 @@
 package ua.des.kino.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.des.kino.daos.repository.user.UserRepositoryCustom;
 import ua.des.kino.model.User;
 import ua.des.kino.daos.repository.user.UserRepository;
+import ua.des.kino.util.exception_handler.EntityIdMismatchException;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 
 import java.util.List;
@@ -13,15 +16,19 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
+//    private final UserRepositoryCustom customRepository;
 
-    public UserServiceImpl(UserRepository repository) {
+    public UserServiceImpl(UserRepository repository
+//            , @Qualifier("userRepositoryCustomImpl") UserRepositoryCustom customRepository
+    ) {
+//        this.customRepository = customRepository;
         this.repository = repository;
     }
 
     @Override
     @Transactional
     public User getByLogin(String login) {
-        return repository.getUserByLogin(login).orElseThrow(() ->
+        return repository.findUserByLogin(login).orElseThrow(() ->
                 new NoSuchElementFoundException("User with login " + login + " is not found", new Throwable()));
     }
 
@@ -34,7 +41,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User getById(Long id) {
-        return repository.getOne(id);
+        return repository.findById(id).orElseThrow( () ->
+        new EntityIdMismatchException("User with id " + id + " isn't exist. ", new Throwable()));
     }
 
     @Override
@@ -45,8 +53,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void save(User user) {
-        repository.save(user);
+    public User save(User user) {
+        return repository.save(user);
     }
 
     @Override

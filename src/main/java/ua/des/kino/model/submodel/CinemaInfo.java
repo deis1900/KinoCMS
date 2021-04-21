@@ -1,39 +1,35 @@
 package ua.des.kino.model.submodel;
 
 import lombok.Data;
-import ua.des.kino.model.Cinema;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.List;
 
 @Data
-@Entity
-@Table(name = "cinema_info")
+@Embeddable
 public class CinemaInfo implements Serializable {
 
-    @Id
-    @Column
-    private Long id;
-
-    @Column(columnDefinition = "TEXT")
+    @Column(table = "cinema_info", columnDefinition = "TEXT")
     private String info;
 
-    @Column
+    @NotEmpty()
+    @Column(table = "cinema_info")
     private String address;
 
-    @Column(name = "location")
+    @Column(table = "cinema_info", name = "location")
     private String location;
 
-    @Column
+    @Pattern(regexp="(^$|[0-9]{10})")
+    @Column(table = "cinema_info")
     private String phone;
 
+    @Column(table = "cinema_info")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cinema_id")
     private List<Photo> photos;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "id", referencedColumnName = "id")
-    private Cinema cinema;
+
 }

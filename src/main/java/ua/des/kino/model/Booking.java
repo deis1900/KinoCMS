@@ -1,10 +1,13 @@
 package ua.des.kino.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -17,7 +20,8 @@ public class Booking implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "booking_id")
     private Set<Ticket> ticket;
 
@@ -25,8 +29,8 @@ public class Booking implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "create_date")
-    private Timestamp createDate;
+    @Column(name = "create_date", columnDefinition = "TIMESTAMP")
+    private LocalDateTime createDate;
 
     @Column
     private Boolean pay;

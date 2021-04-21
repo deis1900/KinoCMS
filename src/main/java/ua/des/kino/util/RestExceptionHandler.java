@@ -14,10 +14,10 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ua.des.kino.util.exception_handler.EntityIdMismatchException;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
-import ua.des.kino.util.exception_handler.TimeConvertorException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 @Slf4j
@@ -31,28 +31,29 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({EntityIdMismatchException.class,
             ConstraintViolationException.class,
-            DataIntegrityViolationException.class})
+            DataIntegrityViolationException.class
+    })
     public ResponseEntity<Object> handleBadRequest(Exception ex, WebRequest request) {
         return handleExceptionInternal(ex, ex.getLocalizedMessage(),
                 new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
+//    TODO rewrite
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseEntity<Object> handleValidationExceptions(
+//            MethodArgumentNotValidException ex, WebRequest request) {
+//        Map<String, String> errorMap = new HashMap<>();
+//        ex.getBindingResult().getAllErrors().forEach((error) -> {
+//            String fieldName = ((FieldError) error).getField();
+//            String errorMessage = error.getDefaultMessage();
+//            errorMap.put(fieldName, errorMessage);
+//        });
+//        String errors = errorMap.keySet().stream()
+//                .map(key -> key + "=" + errorMap.get(key))
+//                .collect(Collectors.joining(", ", "{", "}"));
+//        return handleExceptionInternal(ex, errors + ex.getLocalizedMessage(),
+//                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+//    }
 
-    @ExceptionHandler({TimeConvertorException.class})
-    public ResponseEntity<Object> handleTimeConvert(Exception ex, WebRequest request) {
-        return handleExceptionInternal(ex, ex.getLocalizedMessage(),
-                new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
-    }
 }
 

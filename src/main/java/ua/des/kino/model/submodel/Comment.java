@@ -3,6 +3,7 @@ package ua.des.kino.model.submodel;
 import ua.des.kino.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -21,6 +22,6 @@ public class Comment {
     private String comment;
 
     @Column(name = "date_comment")
-    private Date dateComment;
+    private LocalDateTime dateComment;
 
 }

@@ -1,40 +1,34 @@
 package ua.des.kino.model.submodel;
 
 import lombok.Data;
-import ua.des.kino.model.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
-@Entity
-@Table(name = "users_details")
+@Embeddable
 public class UserDetails implements Serializable {
 
-    @Id
-    @Column(name = "user_id", updatable = false, nullable = false)
-    private Long id;
-
+    @Column(table = "users_details")
+    @NotBlank(message = "Field sex is mandatory")
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
-    @Column
-    private String language;
+    @Column(table = "users_details")
+    @Enumerated
+    private UserLang language;
 
-    @Column
-    private Date birthday;
+    @Past(message = "Date input is invalid for a birth date.")
+    @Column(table = "users_details")
+    private LocalDate birthday;
 
-    @Column
+    @Column(table = "users_details")
     private String city;
 
-    @Column(name = "registration")
-    private Timestamp registrationDate;
-
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "user_id")
-    private User user;
-
+    @Column(name = "registr_date", table = "users_details", columnDefinition = "TIMESTAMP")
+    private LocalDateTime registrationDate;
 }

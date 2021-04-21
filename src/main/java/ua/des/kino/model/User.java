@@ -1,16 +1,20 @@
 package ua.des.kino.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import ua.des.kino.model.submodel.UserContact;
 import ua.des.kino.model.submodel.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.io.Serializable;
-import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "users")
+@SecondaryTables({
+        @SecondaryTable(name = "users_contacts", pkJoinColumns = @PrimaryKeyJoinColumn(name = "user_id")),
+        @SecondaryTable(name = "users_details", pkJoinColumns = @PrimaryKeyJoinColumn(name = "user_id"))})
 public class User implements Serializable {
 
     @Id
@@ -18,21 +22,18 @@ public class User implements Serializable {
     @Column(name = "user_id", updatable = false, nullable = false)
     private Long id;
 
+    @NotBlank(message = "Login is mandatory")
+    @Size(min=4, max=32)
     @Column(unique = true)
     private String login;
 
+    @Min(8)
     @Column
     private String password;
 
-    @OneToOne(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @PrimaryKeyJoinColumn
+    @Embedded
     private UserDetails details;
 
-    @OneToOne(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn
+    @Embedded
     private UserContact contact;
-
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinColumn(name = "owner_id", referencedColumnName = "user_id")
-    private Set<Ticket> ticket;
 }
