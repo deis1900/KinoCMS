@@ -1,10 +1,11 @@
 package ua.des.kino.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ua.des.kino.config.Views;
+import ua.des.kino.model.submodel.Room;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -20,23 +21,28 @@ import java.util.Set;
 @Table(name = "sessions")
 public class Session implements Serializable {
 
+    @JsonView(Views.Public.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonView(Views.Public.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss")
     @Column(name = "show_time", columnDefinition = "TIMESTAMP", nullable = false)
     private LocalDateTime showTime;
 
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-    @OneToMany(mappedBy = "room", cascade = CascadeType.REFRESH, orphanRemoval = true, fetch = FetchType.EAGER)
-    private Set<Seat> seats;
+    @JsonView(Views.Public.class)
+    @NotBlank(message = "Room in the cinema is mandatory")
+    @OneToOne
+    private Room room;
 
+    @JsonView(Views.Public.class)
     @NotBlank(message = "Film in the session is mandatory")
     @OneToOne
     private Film film;
 
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-    @OneToMany(mappedBy = "session", fetch = FetchType.EAGER)
+    @JsonView(Views.Public.class)
+    @OneToMany(mappedBy = "session", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Ticket> ticket;
 
     @Override
@@ -44,7 +50,6 @@ public class Session implements Serializable {
         return "Session{" +
                 "id=" + id +
                 ", showTime=" + showTime +
-                ", seats=" + seats +
                 ", film=" + film +
                 '}';
     }
@@ -54,12 +59,11 @@ public class Session implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Session session = (Session) o;
-        return Objects.equals(id, session.id) && Objects.equals(showTime, session.showTime)
-                && Objects.equals(seats, session.seats) && Objects.equals(film, session.film);
+        return Objects.equals(id, session.id) && Objects.equals(showTime, session.showTime) && Objects.equals(film, session.film);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, showTime, seats, film);
+        return Objects.hash(id, showTime, film);
     }
 }

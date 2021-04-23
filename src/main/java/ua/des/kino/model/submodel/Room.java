@@ -1,11 +1,13 @@
 package ua.des.kino.model.submodel;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ua.des.kino.config.Views;
 import ua.des.kino.model.Cinema;
 import ua.des.kino.model.Seat;
 
@@ -26,6 +28,7 @@ public class Room implements Serializable {
     @Column(name = "room_id")
     private Long id;
 
+    @JsonView(Views.Public.class)
     @Column(nullable = false)
     private String name;
 
@@ -42,13 +45,12 @@ public class Room implements Serializable {
     @JoinColumn(name = "room_id")
     private List<Photo> photoList;
 
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "cinema_id")
+    @JsonView(Views.Public.class)
     @ManyToOne
     @JoinColumn(name = "cinema_id", nullable = false)
     private Cinema cinema;
 
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Seat> seats;
 
     @Override

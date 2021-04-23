@@ -1,11 +1,10 @@
 package ua.des.kino.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ua.des.kino.config.Views;
 import ua.des.kino.model.submodel.CinemaInfo;
 import ua.des.kino.model.submodel.Room;
 
@@ -22,20 +21,24 @@ import java.util.Set;
 @SecondaryTable(name = "cinema_info")
 public class Cinema {
 
+    @JsonView(Views.Public.class)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonView(Views.Public.class)
     @Column
     private String name;
 
+    @JsonView(Views.Public.class)
     @Column(name = "main_photo")
     private String mainPhoto;
 
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonView(Views.Internal.class)
     @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Room> room;
 
+    @JsonView(Views.Internal.class)
     @NotBlank(message = "Description about cinema is mandatory")
     @Embedded
     private CinemaInfo cinemaInfo;

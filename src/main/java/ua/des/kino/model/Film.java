@@ -1,7 +1,9 @@
 package ua.des.kino.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ua.des.kino.config.Views;
 import ua.des.kino.model.submodel.FilmDetails;
 
 import javax.persistence.*;
@@ -18,10 +20,12 @@ import java.time.LocalTime;
 @SecondaryTable(name = "films_details", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
 public class Film implements Serializable {
 
+    @JsonView({Views.Public.class})
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @JsonView(Views.Public.class)
     @Column
     private String name;
 
@@ -43,6 +47,7 @@ public class Film implements Serializable {
     @Column(name = "video_type")
     private String videoType;
 
+    @JsonView({Views.Internal.class})
     @Embedded
     private FilmDetails filmDetails;
 }

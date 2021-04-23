@@ -1,5 +1,6 @@
 package ua.des.kino.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.des.kino.config.Views;
 import ua.des.kino.model.Film;
 import ua.des.kino.model.Session;
 import ua.des.kino.service.FilmService;
@@ -22,7 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "film")
-@Tag(name="Film_Controller", description="Communicate with films.")
+@Tag(name = "Film_Controller", description = "Communicate with films.")
 public class FilmController {
 
     private static final Logger logger =
@@ -126,23 +128,30 @@ public class FilmController {
             summary = "get current film",
             description = "Show customers movie sessions on today."
     )
+    @JsonView(Views.Public.class)
     @GetMapping(value = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Session>> getCurrentFilms(@RequestParam
                                                          @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Parameter(description = "start date for sessions movies")
+                                                         @Parameter(description = "start date for sessions movies")
                                                              final LocalDateTime start) {
         logger.info(start.toString());
         return new ResponseEntity<>(sessionService.getCurrentFilms(start), HttpStatus.OK);
     }
 
     @Operation(
-            summary = "Get Showtimes sorted by date",
+            summary = "Get showtimes sorted by date",
             description = "Schedule of sessions for a month and sort by date."
     )
+    @JsonView(Views.Public.class)
     @GetMapping(value = "/showtimes", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Session>> getShowtimeOnMonth(@RequestParam
-                                                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                                                final LocalDateTime start){
+    public ResponseEntity<?> getShowtimeOnMonth(@RequestParam
+                                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                    final LocalDateTime start) {
+        logger.info(start.toString());
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isAfter(start)) {
+            return new ResponseEntity<>("Now " + now + " which is later than " + start, HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(sessionService.findSessionsOnMonth(start), HttpStatus.OK);
     }
 }
