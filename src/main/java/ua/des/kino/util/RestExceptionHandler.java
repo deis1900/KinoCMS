@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ua.des.kino.util.exception_handler.EntityDataException;
 import ua.des.kino.util.exception_handler.EntityIdMismatchException;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 
@@ -30,6 +31,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({EntityIdMismatchException.class,
+            EntityDataException.class,
             ConstraintViolationException.class,
             DataIntegrityViolationException.class
     })

@@ -30,6 +30,8 @@ public class UserContact implements Serializable {
     @Column(table = "users_contacts")
     private String phone;
 
+    @Max(16)
+    @Min(16)
     @NotEmpty(message = "You must enter a credit card number.")
     @Pattern(regexp = "^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7]"
             + "[0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}"

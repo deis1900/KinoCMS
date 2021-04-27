@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "user")
-@Tag(name="User_Controller", description="Communicate with customers.")
+@Tag(name = "User_Controller", description = "Communicate with customers.")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class.getName());
@@ -35,7 +35,7 @@ public class UserController {
     )
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> getUserById(@PathVariable("id")
-                                                @Parameter(description = "Descriptor user") Long id) {
+                                            @Parameter(description = "Descriptor user") Long id) {
         logger.info("Get user with id: " + id);
         return new ResponseEntity<>(
                 userService.getById(id),
@@ -48,7 +48,7 @@ public class UserController {
     )
     @GetMapping(value = "/name/{login}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> getUserByLogin(@PathVariable
-                                                           @Parameter(description = "User login.") String login) {
+                                               @Parameter(description = "User login.") String login) {
         return new ResponseEntity<>(userService.getByLogin(login), HttpStatus.OK);
     }
 
@@ -71,7 +71,7 @@ public class UserController {
     )
     @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> postCustomer(@Valid @RequestBody
-                                                      @Parameter(description = "Generated user.") User user) {
+                                          @Parameter(description = "Generated user.") User user) {
         logger.info("Creating User " + user.getLogin());
         if (userService.isUserExist(user)) {
             logger.error("login already exist " + user.getLogin());
@@ -96,7 +96,7 @@ public class UserController {
             logger.error("Unable to update. User with id " + id + " not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (user.equals(userService.getById(user.getId()))) {
+        if (user.equals(userService.getById(id))) {
             logger.error("A User with " + user.getId() + " already exist ");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }

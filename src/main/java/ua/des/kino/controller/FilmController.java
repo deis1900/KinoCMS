@@ -15,7 +15,7 @@ import ua.des.kino.config.Views;
 import ua.des.kino.model.Film;
 import ua.des.kino.model.Session;
 import ua.des.kino.service.FilmService;
-import ua.des.kino.service.SessionService;
+import ua.des.kino.service.ShowtimesService;
 import ua.des.kino.util.CustomErrorType;
 
 import javax.validation.Valid;
@@ -31,11 +31,11 @@ public class FilmController {
             LoggerFactory.getLogger(FilmController.class.getName());
 
     private final FilmService filmService;
-    private final SessionService sessionService;
+    private final ShowtimesService showtimesService;
 
-    public FilmController(FilmService filmService, SessionService sessionService) {
+    public FilmController(FilmService filmService, ShowtimesService showtimesService) {
         this.filmService = filmService;
-        this.sessionService = sessionService;
+        this.showtimesService = showtimesService;
     }
 
     @Operation(
@@ -100,7 +100,7 @@ public class FilmController {
             logger.error("Unable to update. Film with id '" + id + "' not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (film.equals(filmService.getById(film.getId()))) {
+        if (film.equals(filmService.getById(id))) {
             logger.error("A Film with " + film.getId() + " already exist ");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
@@ -135,7 +135,7 @@ public class FilmController {
                                                          @Parameter(description = "start date for sessions movies")
                                                              final LocalDateTime start) {
         logger.info(start.toString());
-        return new ResponseEntity<>(sessionService.getCurrentFilms(start), HttpStatus.OK);
+        return new ResponseEntity<>(showtimesService.getCurrentFilms(start), HttpStatus.OK);
     }
 
     @Operation(
@@ -152,6 +152,6 @@ public class FilmController {
         if (now.isAfter(start)) {
             return new ResponseEntity<>("Now " + now + " which is later than " + start, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(sessionService.findSessionsOnMonth(start), HttpStatus.OK);
+        return new ResponseEntity<>(showtimesService.findSessionsOnMonth(start), HttpStatus.OK);
     }
 }

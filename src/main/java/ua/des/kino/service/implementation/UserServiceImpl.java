@@ -1,11 +1,10 @@
-package ua.des.kino.service;
+package ua.des.kino.service.implementation;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.daos.repository.user.UserRepositoryCustom;
 import ua.des.kino.model.User;
-import ua.des.kino.daos.repository.user.UserRepository;
+import ua.des.kino.repository.UserRepository;
+import ua.des.kino.service.UserService;
 import ua.des.kino.util.exception_handler.EntityIdMismatchException;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 
@@ -16,12 +15,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
-//    private final UserRepositoryCustom customRepository;
 
-    public UserServiceImpl(UserRepository repository
-//            , @Qualifier("userRepositoryCustomImpl") UserRepositoryCustom customRepository
-    ) {
-//        this.customRepository = customRepository;
+    public UserServiceImpl(UserRepository repository){
         this.repository = repository;
     }
 

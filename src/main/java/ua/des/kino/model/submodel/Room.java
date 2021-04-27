@@ -24,6 +24,7 @@ import java.util.Set;
 @Table(name = "rooms")
 public class Room implements Serializable {
 
+    @JsonView(Views.Public.class)
     @Id
     @Column(name = "room_id")
     private Long id;
@@ -32,12 +33,15 @@ public class Room implements Serializable {
     @Column(nullable = false)
     private String name;
 
+    @JsonView(Views.Internal.class)
     @Column(columnDefinition = "TEXT")
     private String info;
 
+    @JsonView(Views.Internal.class)
     @Column
     private String banner;
 
+    @JsonView(Views.Public.class)
     @Column(name = "room_schema")
     private String roomSchema;
 
@@ -50,6 +54,7 @@ public class Room implements Serializable {
     @JoinColumn(name = "cinema_id", nullable = false)
     private Cinema cinema;
 
+    @JsonView(Views.Internal.class)
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Seat> seats;
 

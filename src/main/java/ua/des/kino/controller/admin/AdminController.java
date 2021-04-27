@@ -1,4 +1,4 @@
-package ua.des.kino.controller;
+package ua.des.kino.controller.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.des.kino.model.submodel.Photo;
-import ua.des.kino.service.util.PhotoService;
+import ua.des.kino.service.PhotoService;
 import ua.des.kino.util.CustomErrorType;
 
 import javax.validation.Valid;

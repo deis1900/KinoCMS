@@ -1,4 +1,4 @@
-package ua.des.kino.daos.repository;
+package ua.des.kino.repository;
 
 import org.springframework.data.repository.Repository;
 import ua.des.kino.model.News;

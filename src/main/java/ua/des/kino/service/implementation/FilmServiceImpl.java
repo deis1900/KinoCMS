@@ -1,11 +1,12 @@
-package ua.des.kino.service;
+package ua.des.kino.service.implementation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.des.kino.model.Film;
-import ua.des.kino.daos.repository.FilmRepository;
+import ua.des.kino.repository.FilmRepository;
+import ua.des.kino.service.FilmService;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 
 import java.util.List;

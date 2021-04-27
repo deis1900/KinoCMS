@@ -1,4 +1,4 @@
-package ua.des.kino.service.util;
+package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
 import ua.des.kino.model.submodel.Photo;

@@ -8,6 +8,7 @@ import ua.des.kino.config.Views;
 import ua.des.kino.model.submodel.Room;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -23,9 +24,13 @@ public class Seat implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Max(60)
+    @JsonView(Views.Public.class)
     @Column
     private Integer series;
 
+    @Max(120)
+    @JsonView(Views.Public.class)
     @Column
     private Integer place;
 

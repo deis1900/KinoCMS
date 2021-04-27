@@ -11,8 +11,8 @@ import ua.des.kino.CinemaApplication;
 import ua.des.kino.model.Film;
 import ua.des.kino.model.Session;
 import ua.des.kino.model.submodel.FilmDetails;
-import ua.des.kino.daos.repository.FilmRepository;
-import ua.des.kino.daos.repository.SessionEntityRepository;
+import ua.des.kino.repository.FilmRepository;
+import ua.des.kino.repository.ShowtimeRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,7 +30,7 @@ public class FilmRepositoryTest {
     private FilmRepository repository;
 
     @Autowired
-    private SessionEntityRepository sessionEntityRepository;
+    private ShowtimeRepository showtimeRepository;
 
     @Before
     public void saveTest() {
@@ -48,7 +48,7 @@ public class FilmRepositoryTest {
 
     @Test
     public void getCurrentSessionToday(){
-        List<Session> sessionList = sessionEntityRepository.findSessionsByShowTimeBetween(
+        List<Session> sessionList = showtimeRepository.findSessionsByShowTimeBetweenOrderByShowTimeAsc(
                 LocalDateTime.of(2021, 4,12,7, 5, 0),
                 LocalDateTime.of(2021, 5,12,12, 50, 0));
         sessionList.forEach(System.out::println);
