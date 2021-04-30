@@ -5,12 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ua.des.kino.config.Views;
-import ua.des.kino.model.submodel.Room;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
 
 @NoArgsConstructor
@@ -53,7 +51,8 @@ public class Seat implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Seat seat = (Seat) o;
-        return Objects.equals(id, seat.id) && Objects.equals(series, seat.series) && Objects.equals(place, seat.place) && Objects.equals(free, seat.free);
+        return Objects.equals(id, seat.id) && Objects.equals(series, seat.series)
+                && Objects.equals(place, seat.place) && Objects.equals(free, seat.free);
     }
 
     @Override

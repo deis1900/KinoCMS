@@ -29,6 +29,7 @@ public class Ticket implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Seat seat;
 
+    @JsonView(Views.Internal.class)
     @Column
     private Integer price;
 

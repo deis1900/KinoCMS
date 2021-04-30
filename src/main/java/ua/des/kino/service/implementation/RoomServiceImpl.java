@@ -2,14 +2,16 @@ package ua.des.kino.service.implementation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.submodel.Room;
+import ua.des.kino.model.Room;
 import ua.des.kino.repository.RoomRepository;
 import ua.des.kino.service.RoomService;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 
 import java.util.List;
 
+@Service
 public class RoomServiceImpl implements RoomService {
 
     public static final Logger logger = LoggerFactory.getLogger(RoomServiceImpl.class.getName());

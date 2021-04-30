@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ua.des.kino.config.Views;
-import ua.des.kino.model.submodel.Room;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -26,16 +26,19 @@ public class Session implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotEmpty
     @JsonView(Views.Public.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss")
     @Column(name = "show_time", columnDefinition = "TIMESTAMP", nullable = false)
     private LocalDateTime showTime;
 
+    @NotEmpty
     @JsonView(Views.Public.class)
     @NotBlank(message = "Room in the cinema is mandatory")
     @OneToOne
     private Room room;
 
+    @NotEmpty
     @JsonView(Views.Public.class)
     @NotBlank(message = "Film in the session is mandatory")
     @OneToOne

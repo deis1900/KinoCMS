@@ -2,6 +2,7 @@ package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
 import ua.des.kino.model.Cinema;
+import ua.des.kino.model.Room;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface CinemaService {
     List<Cinema> findAll();
 
     Cinema findByName(String name);
+
+    List<Room> getCinemaInfo(Long id);
 }

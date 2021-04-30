@@ -12,7 +12,7 @@ import ua.des.kino.CinemaApplication;
 import ua.des.kino.model.User;
 import ua.des.kino.model.submodel.Sex;
 import ua.des.kino.model.submodel.UserContact;
-import ua.des.kino.daos.repository.user.UserRepository;
+import ua.des.kino.repository.UserRepository;
 import ua.des.kino.model.submodel.UserDetails;
 import ua.des.kino.model.submodel.UserLang;
 

@@ -5,19 +5,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.des.kino.model.Film;
+import ua.des.kino.model.Room;
 import ua.des.kino.model.Session;
 import ua.des.kino.repository.ShowtimeRepository;
 import ua.des.kino.service.FilmService;
+import ua.des.kino.service.RoomService;
 import ua.des.kino.service.ShowtimesService;
 import ua.des.kino.util.exception_handler.EntityDataException;
-import ua.des.kino.util.exception_handler.EntityIdMismatchException;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import java.time.chrono.ChronoLocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,10 +28,14 @@ public class ShowtimesServiceImpl implements ShowtimesService {
 
     private final ShowtimeRepository showtimeRepository;
     private final FilmService filmService;
+    private final RoomService roomService;
 
-    public ShowtimesServiceImpl(ShowtimeRepository showtimeRepository, FilmService filmService) {
+    public ShowtimesServiceImpl(ShowtimeRepository showtimeRepository,
+                                FilmService filmService,
+                                RoomService roomService) {
         this.showtimeRepository = showtimeRepository;
         this.filmService = filmService;
+        this.roomService = roomService;
     }
 
     @Override
@@ -62,34 +65,6 @@ public class ShowtimesServiceImpl implements ShowtimesService {
 
     @Override
     @Transactional
-    public List<Session> saveAll(Set<Session> sessionsIn) {
-
-        // TODO rewrite & create Exception handlers
-        List<Long> ids = sessionsIn.stream()
-                .map(Session::getId)
-                .collect(Collectors.toList());
-        List<Session> sessionsDB = showtimeRepository.findBySessionIds(ids);
-        sessionsDB.forEach(System.out::println);
-
-        List<Session> duplicates = new ArrayList<>();
-        for (Session session : sessionsIn) {
-            if(reconcileDates(session)) {
-
-                duplicates = sessionsDB.stream()
-                        .filter(session::equals)
-                        .filter(value -> session.getShowTime().equals(value.getShowTime()))
-                        .filter(value -> session.getRoom().equals(value.getRoom()))
-                        .collect(Collectors.toList());
-            }
-
-        }
-//        sessionsIn(duplicates);
-        showtimeRepository.saveAll(sessionsIn);
-        return duplicates;
-    }
-
-    @Override
-    @Transactional
     public Session update(Session session) {
         return showtimeRepository.saveAndFlush(session);
     }
@@ -101,21 +76,104 @@ public class ShowtimesServiceImpl implements ShowtimesService {
 
     @Override
     @Transactional
-    public boolean reconcileDates(Session session) {
-        Film filmDB;
-        try {
-            filmDB = filmService.getById(session.getFilm().getId());
-        } catch (Exception e) {
-            logger.error("Film with id " + session.getFilm().getId() + " (from set session) is not exist.");
-            throw new EntityIdMismatchException("Film from this session is not exist.", e);
+    public List<Session> saveAll(Set<Session> sessionsIn) {
+        List<Session> unique = checkInputDate(sessionsIn);
+
+        if (!unique.isEmpty()) {
+            showtimeRepository.saveAll(unique);
+            return sessionsIn.stream()
+                    .filter(unique::contains)
+                    .collect(Collectors.toList());
         }
-        LocalDate finishFilmShow = session.getFilm().getFinishDate();
-
-        if (filmDB.getFinishDate().isEqual(finishFilmShow)) {
-            return session.getShowTime().isBefore(ChronoLocalDateTime.from(finishFilmShow));
-
-        } else throw new EntityDataException("This Film show is over." + session.getShowTime() +
-                " : " + finishFilmShow, new Throwable());
+        throw new EntityDataException("Room or Film isn't exists", new Throwable());
     }
+
+    private List<Session> checkInputDate(Set<Session> sessionsIn) {
+        List<Film> dbFilms = filmService.getFilmList();
+        List<Room> dbRooms = roomService.findAll();
+        List<Session> dbSessions = showtimeRepository.findAll();
+
+        List<Long> filmIds = dbFilms.stream()
+                .map(Film::getId)
+                .collect(Collectors.toList());
+
+        List<Long> roomIds = dbRooms.stream()
+                .map(Room::getId)
+                .collect(Collectors.toList());
+
+        return sessionsIn.stream()
+                .filter(value -> reconcileDates(value, dbFilms))
+                .filter(value -> filmIds.contains(value.getFilm().getId()))
+                .filter(value -> roomIds.contains(value.getRoom().getId()))
+                .filter(value -> isExistRoom(value, dbRooms))
+                .filter(value -> busyPlaceAndTime(value, dbSessions))
+                .collect(Collectors.toList());
+    }
+
+
+    private boolean reconcileDates(Session session, List<Film> films) {
+        for (Film film : films) {
+            if (film.getId().equals(session.getFilm().getId())) {
+                session.setFilm(film);
+            }
+        }
+
+        if (session.getFilm().getName().equals("")) {
+            throw new NoSuchElementFoundException("Film isn't exist.", new Throwable());
+        }
+
+        LocalDate finishDateOfFilm = session.getFilm().getFinishDate();
+        LocalDate startDateOfFilm = session.getFilm().getStartDate();
+        LocalDate showDate = session.getShowTime().toLocalDate();
+
+        if (session.getShowTime().isAfter(LocalDateTime.now())) {
+            if (showDate.isBefore(finishDateOfFilm)) {
+                return showDate.isAfter(startDateOfFilm);
+            } else
+                throw new EntityDataException("Session has wrong show date." + session.getShowTime(), new Throwable());
+        } else
+            throw new EntityDataException("Cannot set show date of session ("
+                    + session.getShowTime() + ") in the past.", new Throwable());
+    }
+
+    private boolean isExistRoom(Session session, List<Room> rooms) {
+        for (Room room : rooms) {
+            if (room.getId().equals(session.getRoom().getId())) {
+                session.setRoom(room);
+                return true;
+            }
+        }
+
+        if (session.getRoom().getName().equals("")) {
+            throw new NoSuchElementFoundException("Room isn't exist.", new Throwable());
+        }
+        return false;
+    }
+
+    private boolean busyPlaceAndTime(Session session, List<Session> sessions) {
+        for (Session s : sessions) {
+            if (s.getRoom().getId().equals(session.getRoom().getId())) {
+                if (s.getShowTime().equals(session.getShowTime())) {
+                    throw new EntityDataException(
+                            "The room - " + session.getRoom().getName() +
+                                    " in the cinema -" + session.getRoom().getCinema().getName() +
+                                    " is busy at " + session.getShowTime() + ".",
+                            new Throwable());
+                }
+//                TODO before film not finished new wouldn't start
+//                long filmDuration = s.getFilm().getDuration().getLong();
+//                long timeoutBetweenShowtimes = Duration.between(s.getShowTime(), session.getShowTime()).getSeconds();
+//                if ( timeoutBetweenShowtimes > filmDuration){
+//                    throw new EntityDataException(
+//                            "New session (" + session.getShowTime() + ")" +
+//                            " cannot begin before previous film (" + s.getShowTime() +
+//                            " duration " + s.getFilm().getDuration() + ") stopped.",
+//                            new Throwable());
+//                }
+            }
+        }
+        return true;
+    }
+
 }
 

@@ -26,7 +26,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({NoSuchElementFoundException.class})
     protected ResponseEntity<Object> handleNotFound(Exception ex, WebRequest request) {
-        return handleExceptionInternal(ex, "Element wasn't found",
+        return handleExceptionInternal(ex, ex.getLocalizedMessage(),
                 new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 

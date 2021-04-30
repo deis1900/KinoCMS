@@ -5,11 +5,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.des.kino.model.Cinema;
+import ua.des.kino.model.Room;
 import ua.des.kino.repository.CinemaRepository;
+import ua.des.kino.repository.RoomRepository;
 import ua.des.kino.service.CinemaService;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CinemaServiceImpl implements CinemaService {
@@ -17,9 +21,11 @@ public class CinemaServiceImpl implements CinemaService {
     public static final Logger logger = LoggerFactory.getLogger(ShowtimesServiceImpl.class.getName());
 
     private final CinemaRepository cinemaRepository;
+    private final RoomRepository roomRepository;
 
-    public CinemaServiceImpl(CinemaRepository cinemaRepository) {
+    public CinemaServiceImpl(CinemaRepository cinemaRepository, RoomRepository roomRepository) {
         this.cinemaRepository = cinemaRepository;
+        this.roomRepository = roomRepository;
     }
 
     @Override
@@ -44,6 +50,18 @@ public class CinemaServiceImpl implements CinemaService {
     @Override
     public Cinema findByName(String name) {
         return cinemaRepository.findByName(name);
+    }
+
+    @Override
+    public List<Room> getCinemaInfo(Long id) {
+        Cinema cinema = findById(id);
+        Collection<Room> rooms = roomRepository.findByCinema_Id(id);
+        if (rooms.isEmpty()) {
+            throw new NoSuchElementFoundException("Cinema with id: " + id + " hasn't rooms.", new Throwable());
+        }
+        return rooms.stream()
+                .peek(room -> room.setCinema(cinema))
+                .collect(Collectors.toList());
     }
 
     @Override

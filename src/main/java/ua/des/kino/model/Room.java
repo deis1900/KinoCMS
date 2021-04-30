@@ -1,15 +1,11 @@
-package ua.des.kino.model.submodel;
+package ua.des.kino.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ua.des.kino.config.Views;
-import ua.des.kino.model.Cinema;
-import ua.des.kino.model.Seat;
+import ua.des.kino.model.submodel.Photo;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -45,7 +41,8 @@ public class Room implements Serializable {
     @Column(name = "room_schema")
     private String roomSchema;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonView(Views.Public.class)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "room_id")
     private List<Photo> photoList;
 
@@ -54,8 +51,9 @@ public class Room implements Serializable {
     @JoinColumn(name = "cinema_id", nullable = false)
     private Cinema cinema;
 
-    @JsonView(Views.Internal.class)
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonView(Views.Public.class)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "id", referencedColumnName = "room_id")
     private Set<Seat> seats;
 
     @Override

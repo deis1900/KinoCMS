@@ -1,8 +1,9 @@
 package ua.des.kino.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ua.des.kino.config.Views;
 import ua.des.kino.model.submodel.UserContact;
 import ua.des.kino.model.submodel.UserDetails;
@@ -11,7 +12,9 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 
-@Data
+@NoArgsConstructor
+@Setter
+@Getter
 @Entity
 @Table(name = "users")
 @SecondaryTables({

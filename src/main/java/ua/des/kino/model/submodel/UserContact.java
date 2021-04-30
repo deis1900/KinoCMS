@@ -1,6 +1,8 @@
 package ua.des.kino.model.submodel;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import ua.des.kino.config.Views;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -10,26 +12,32 @@ import java.io.Serializable;
 @Embeddable
 public class UserContact implements Serializable {
 
+    @JsonView(Views.Public.class)
     @Size(min = 2, max = 35, message = "Name must be 2-35 characters long.")
     @Column(table = "users_contacts")
     private String name;
 
+    @JsonView(Views.Public.class)
     @Size(min = 2, max = 35, message = "Surname must be 2-35 characters long.")
     @Column(table = "users_contacts")
     private String surname;
 
+    @JsonView(Views.Internal.class)
     @Column(table = "users_contacts")
     private String address;
 
+    @JsonView(Views.Internal.class)
     @NotEmpty(message = "You must enter a email address.")
     @Email(message = "Enter a valid email address.")
     @Column(unique = true, table = "users_contacts")
     private String email;
 
+    @JsonView(Views.Internal.class)
     @Pattern(regexp="(^$|[0-9]{10})")
     @Column(table = "users_contacts")
     private String phone;
 
+    @JsonView(Views.Internal.class)
     @Max(16)
     @Min(16)
     @NotEmpty(message = "You must enter a credit card number.")

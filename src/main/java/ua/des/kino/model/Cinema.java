@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ua.des.kino.config.Views;
 import ua.des.kino.model.submodel.CinemaInfo;
-import ua.des.kino.model.submodel.Room;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -34,8 +33,7 @@ public class Cinema {
     @Column(name = "main_photo")
     private String mainPhoto;
 
-    @JsonView(Views.Internal.class)
-    @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Room> room;
 
     @JsonView(Views.Internal.class)

@@ -72,7 +72,7 @@ public class FilmController {
             description = "."
     )
     @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> postCustomer(@Valid @RequestBody
+    public ResponseEntity<?> saveFilm(@Valid @RequestBody
                                           @Parameter(description = "Generated film.") Film film) {
         logger.info("Creating film " + film.getName());
         if (filmService.isExist(film)) {
@@ -91,7 +91,7 @@ public class FilmController {
             description = "Save and flush film to db."
     )
     @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable("id") Long id, @Valid @RequestBody Film film) {
+    public ResponseEntity<?> updateFilm(@PathVariable("id") Long id, @Valid @RequestBody Film film) {
 
         logger.info("Update film with id " + id);
         Film filmDB = filmService.getById(id);
@@ -100,10 +100,11 @@ public class FilmController {
             logger.error("Unable to update. Film with id '" + id + "' not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (film.equals(filmService.getById(id))) {
+        if (film.equals(filmDB)) {
             logger.error("A Film with " + film.getId() + " already exist ");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
+        film.setId(id);
         filmService.update(film);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

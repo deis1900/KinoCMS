@@ -71,7 +71,7 @@ public class ShowtimesController {
             logger.error("Unable to update. Session with id " + id + " not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (session.equals(showtimesService.findById(id))) {
+        if (session.equals(sessionDB)) {
             logger.error("Session with " + session.getId() + " already exist ");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }

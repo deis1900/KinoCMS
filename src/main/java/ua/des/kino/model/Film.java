@@ -20,7 +20,7 @@ import java.time.LocalTime;
 @SecondaryTable(name = "films_details", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
 public class Film implements Serializable {
 
-    @JsonView({Views.Public.class})
+    @JsonView(Views.Public.class)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

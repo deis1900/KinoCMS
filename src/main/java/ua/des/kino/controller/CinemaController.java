@@ -1,5 +1,6 @@
-package ua.des.kino.controller.admin;
+package ua.des.kino.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.slf4j.Logger;
@@ -8,14 +9,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.des.kino.config.Views;
 import ua.des.kino.model.Cinema;
+import ua.des.kino.model.Room;
 import ua.des.kino.service.CinemaService;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/admin/cinema")
+@RequestMapping(value = "/cinema")
 public class CinemaController {
 
     private final Logger logger = LoggerFactory.getLogger(CinemaController.class.getName());
@@ -27,17 +30,20 @@ public class CinemaController {
     }
 
     @Operation(summary = "get Cinema by id",
-            description = "get Cinema by id, else throw NoSuchElementException"
+            description = "Find all info about cinema by id, else throw NoSuchElementException"
     )
+    @JsonView(Views.Public.class)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getCinemaById(@PathVariable("id")
-                                           @Parameter(description = "ID for cinema") Long id){
-        return new ResponseEntity<>(cinemaService.findById(id), HttpStatus.OK);
+    public ResponseEntity<List<Room>> getCinemaById(@PathVariable("id")
+                                             @Parameter(description = "ID of cinema") Long id){
+        logger.info("Get Cinema with id: " + id);
+        return new ResponseEntity<>(cinemaService.getCinemaInfo(id), HttpStatus.OK);
     }
 
     @Operation(summary = "get list of Cinema",
             description = "get list of Cinema or empty list"
     )
+    @JsonView(Views.Internal.class)
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Cinema>> getListOfCinema(){
         return new ResponseEntity<>(cinemaService.findAll(), HttpStatus.OK);
@@ -46,6 +52,7 @@ public class CinemaController {
     @Operation(summary = "save new Cinema",
             description = "save new Cinema"
     )
+    @JsonView(Views.Internal.class)
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> saveRoom(@Valid @RequestBody
                                       @Parameter(description = "Generated cinema") Cinema cinema) {
@@ -71,10 +78,11 @@ public class CinemaController {
             logger.error("Unable to update. Cinema with id " + id + " not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (cinema.equals(cinemaService.findById(id))) {
+        if (cinema.equals(cinemaDB)) {
             logger.error("Cinema with " + cinema.getId() + " already exist ");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
+        cinema.setId(id);
         return new ResponseEntity<>(cinemaService.update(cinema), HttpStatus.NO_CONTENT);
     }
 

@@ -23,6 +23,4 @@ public interface ShowtimesService {
     Session update(Session session);
 
     void delete(Long id);
-
-    boolean reconcileDates(Session session);
 }

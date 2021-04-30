@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "user")
+@RequestMapping(value = "/user")
 @Tag(name = "User_Controller", description = "Communicate with customers.")
 public class UserController {
 
@@ -96,10 +96,11 @@ public class UserController {
             logger.error("Unable to update. User with id " + id + " not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (user.equals(userService.getById(id))) {
+        if (user.equals(userDB)) {
             logger.error("A User with " + user.getId() + " already exist ");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
+        user.setId(id);
         userService.updateUser(user);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
