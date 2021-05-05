@@ -1,8 +1,13 @@
 package ua.des.kino.repository;
 
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import ua.des.kino.model.Ticket;
 
-@org.springframework.stereotype.Repository
-public interface TicketRepository extends Repository<Ticket, Long> {
+import java.util.List;
+
+@Repository
+public interface TicketRepository extends JpaRepository<Ticket, Long> {
+
+    List<Ticket> findTicketBySession_Id(Long id);
 }

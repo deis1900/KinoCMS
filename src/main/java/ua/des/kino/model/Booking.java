@@ -1,5 +1,6 @@
 package ua.des.kino.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,8 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "booking")
 public class Booking implements Serializable {
-    // user get ticket from booking, pay set true. delete booking. create ticket
-    //check before place is free or not
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,14 +26,15 @@ public class Booking implements Serializable {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Ticket> ticket;
 
-//    @JsonView(Views.Internal.class)
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @JsonView(Views.Internal.class)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "create_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime createDate;
 
+    @JsonView(Views.Internal.class)
     @Column
     private Boolean pay;
 

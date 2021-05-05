@@ -2,24 +2,30 @@ package ua.des.kino.service.implementation;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.des.kino.model.Booking;
+import ua.des.kino.model.Ticket;
 import ua.des.kino.model.User;
 import ua.des.kino.model.submodel.UserDetails;
 import ua.des.kino.repository.UserRepository;
+import ua.des.kino.service.BookingService;
 import ua.des.kino.service.UserService;
 import ua.des.kino.util.exception_handler.EntityIdMismatchException;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
+    private final BookingService bookingService;
 
-    public UserServiceImpl(UserRepository repository) {
+    public UserServiceImpl(UserRepository repository, BookingService bookingService) {
         this.repository = repository;
+        this.bookingService = bookingService;
     }
 
     @Override
@@ -67,6 +73,26 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUser(Long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    public Long toBookTickets(Booking booking) {
+        return bookingService.saveBooking(booking);
+    }
+
+    @Override
+    public Set<Ticket> buyTickets(Booking booking) {
+        return bookingService.buyTicket(booking);
+    }
+
+    @Override
+    public List<Booking> bookingListByUser(Long id) {
+        return bookingService.findBookingListByUser(id);
+    }
+
+    @Override
+    public void cancelBooking(Long userId, Booking booking) {
+        bookingService.cancelBooking(userId, booking);
     }
 
 }
