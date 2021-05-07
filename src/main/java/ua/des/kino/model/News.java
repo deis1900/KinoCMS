@@ -1,16 +1,19 @@
 package ua.des.kino.model;
 
-import lombok.Data;
-import ua.des.kino.model.submodel.Comment;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ua.des.kino.model.submodel.NewsType;
 import ua.des.kino.model.submodel.Photo;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
-@Data
+@NoArgsConstructor
+@Setter
+@Getter
 @Entity
 @Table(name = "news")
 public class News {
@@ -22,22 +25,20 @@ public class News {
     @Column(columnDefinition = "TEXT")
     private String info;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "news_id")
     private List<Photo> photos;
 
     @Column
     private Boolean state;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss")
     @Column
     private LocalDateTime startDate;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss")
     @Column
     private LocalDateTime finishDate;
-
-    @OneToMany
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    private List<Comment> comments;
 
     @Enumerated
     private NewsType newsType;

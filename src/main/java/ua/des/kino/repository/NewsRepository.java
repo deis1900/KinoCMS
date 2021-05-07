@@ -1,10 +1,13 @@
 package ua.des.kino.repository;
 
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import ua.des.kino.model.News;
 
-@org.springframework.stereotype.Repository
-public interface NewsRepository extends Repository<News, Long> {
+import java.util.List;
 
+@Repository
+public interface NewsRepository extends JpaRepository<News, Long> {
 
+    List<News> findAllByStateTrue();
 }
