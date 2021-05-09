@@ -3,6 +3,7 @@ package ua.des.kino.controller.admin;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,10 +15,12 @@ import ua.des.kino.model.Session;
 import ua.des.kino.model.Ticket;
 import ua.des.kino.service.TicketService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "admin/ticket")
+@Tag(name = "Ticket_Controller", description = "Communicate with tickets(only for administrator)")
 public class TicketController {
 
     private final Logger logger = LoggerFactory.getLogger(TicketController.class.getName());
@@ -30,6 +33,7 @@ public class TicketController {
 
     @Operation(summary = "get Ticket by id",
             description = "get ticket by id")
+    @JsonView(Views.Custom.class)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getTicketByID(@PathVariable("id")
                                            @Parameter(description = "Descriptor ticket") Long id) {
@@ -40,7 +44,7 @@ public class TicketController {
     @Operation(
             summary = "get Ticket list"
     )
-    @JsonView(Views.Public.class)
+    @JsonView(Views.Custom.class)
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Ticket>> getListTickets() {
 
@@ -51,9 +55,14 @@ public class TicketController {
             summary = "get Session Tickets",
             description = "getting a seats in a specific session"
     )
-    @JsonView(Views.Public.class)
-    @GetMapping(value = "/session/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Ticket>> getSessionTickets(@RequestBody Session session) {
+    @JsonView(Views.Custom.class)
+    @GetMapping(value = "/session",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getSessionTickets(@Valid @RequestBody Session session) {
+        logger.info(session.toString());
+        if(session.getFilm().getQuality() == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(ticketService.getSessionTickets(session), HttpStatus.OK);
     }
 

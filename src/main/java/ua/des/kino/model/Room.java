@@ -22,6 +22,7 @@ public class Room implements Serializable {
 
     @JsonView(Views.Public.class)
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "room_id")
     private Long id;
 
@@ -47,8 +48,8 @@ public class Room implements Serializable {
     private List<Photo> photoList;
 
     @JsonView(Views.Public.class)
-    @ManyToOne
-    @JoinColumn(name = "cinema_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cinema_id")
     private Cinema cinema;
 
     @JsonView(Views.Public.class)

@@ -3,12 +3,13 @@ package ua.des.kino.model.submodel;
 import ua.des.kino.model.User;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Table(name = "comments")
-public class Comment {
+public class Comment implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

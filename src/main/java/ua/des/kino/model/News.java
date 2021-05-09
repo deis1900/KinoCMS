@@ -8,6 +8,7 @@ import ua.des.kino.model.submodel.NewsType;
 import ua.des.kino.model.submodel.Photo;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "news")
-public class News {
+public class News implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -2,18 +2,16 @@ package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
 import ua.des.kino.model.Booking;
-import ua.des.kino.model.Ticket;
 import ua.des.kino.model.User;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public interface UserService {
 
     User getByLogin(String login);
 
-    Boolean isUserExist(User user);
+    Boolean isUserExist(Long id);
 
     User getById(Long id);
 
@@ -27,9 +25,9 @@ public interface UserService {
 
     List<Booking> bookingListByUser(Long id);
 
-    Long toBookTickets(Booking booking);
+    Booking toBookTickets(Booking booking);
 
-    Set<Ticket> buyTickets(Booking booking);
+    Booking buyTickets(Booking booking);
 
     void cancelBooking(Long userId, Booking booking);
 }

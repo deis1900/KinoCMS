@@ -1,5 +1,6 @@
 package ua.des.kino.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.des.kino.config.Views;
 import ua.des.kino.model.Booking;
 import ua.des.kino.model.Ticket;
 import ua.des.kino.model.User;
@@ -57,7 +59,7 @@ public class UserController {
             summary = "get all customer",
             description = "."
     )
-    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.findAll();
         if (users.isEmpty()) {
@@ -70,16 +72,15 @@ public class UserController {
             summary = "save customer",
             description = "."
     )
-    @PostMapping(value = "/",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> postUser(@Valid @RequestBody
                                       @Parameter(description = "Generated user.") User user) {
         logger.info("Creating User " + user.getLogin());
-        if (userService.isUserExist(user)) {
-            logger.error("login already exist " + user.getLogin());
+        if (userService.isUserExist(user.getId())) {
+            logger.error("Login already exist " + user.getLogin());
             return new ResponseEntity<>(
-                    new CustomErrorType("user with login " + user.getLogin() + " already exist!"),
+                    new CustomErrorType("User with login " + user.getLogin() +
+                            " already exist and the same!"),
                     HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(userService.save(user), HttpStatus.CREATED);
@@ -89,9 +90,7 @@ public class UserController {
             summary = "update customer",
             description = "Save and flush user to db."
     )
-    @PutMapping(value = "/{id}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @Valid @RequestBody User user) {
 
         logger.info("Update user with id " + id);
@@ -130,6 +129,7 @@ public class UserController {
             summary = "get all booking user",
             description = "get all user bookings and delete all outdated ones."
     )
+    @JsonView(Views.Custom.class)
     @GetMapping(value = "/booking/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Booking>> getBookingList(@PathVariable("id") Long id) {
         return new ResponseEntity<>(userService.bookingListByUser(id), HttpStatus.OK);
@@ -139,22 +139,22 @@ public class UserController {
             summary = "create booking",
             description = "create booking or buy ticket"
     )
-    @PostMapping(value = "/booking/",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Long> toBookTickets(@Valid @RequestBody
+    @JsonView(Views.Custom.class)
+    @PostMapping(value = "/booking/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Booking> toBookTickets(@Valid @RequestBody
                                               @Parameter(description = "Save booking") Booking booking) {
         return new ResponseEntity<>(userService.toBookTickets(booking), HttpStatus.CREATED);
     }
 
     @Operation(
             summary = "buy ticket",
-            description = "buy ticket without PaymentServices."
+            description = "buy ticket without PaymentServices. Only pay parameter should change to true"
     )
-    @PutMapping(value = "/booking",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Set<Ticket>> buyTickets(Booking booking) {
+    @JsonView(Views.Custom.class)
+    @PutMapping(value = "/booking", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Booking> buyTickets(@Valid @RequestBody
+                                                          @Parameter(description = "Booking entity for update DB")
+                                                          Booking booking) {
 
         return new ResponseEntity<>(userService.buyTickets(booking), HttpStatus.OK);
     }
@@ -165,12 +165,13 @@ public class UserController {
             summary = "delete booking by user id",
             description = "canceled booking by user id parameter"
     )
+    @JsonView(Views.Public.class)
     @DeleteMapping(value = "/booking/{id}")
     public ResponseEntity<?> cancelBooking(@PathVariable("id") Long userId,
                                            @Valid @RequestBody
                                            @Parameter( description = "canceled booking")
                                                    Booking booking){
         userService.cancelBooking(userId, booking);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

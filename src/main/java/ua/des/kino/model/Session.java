@@ -44,8 +44,8 @@ public class Session implements Serializable {
     @OneToOne
     private Film film;
 
-    @JsonView(Views.Public.class)
-    @OneToMany(mappedBy = "session", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonView(Views.Internal.class)
+    @OneToMany(mappedBy = "session", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     private Set<Ticket> ticket;
 
     @Override

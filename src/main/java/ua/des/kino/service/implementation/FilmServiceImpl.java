@@ -26,7 +26,7 @@ public class FilmServiceImpl implements FilmService {
     @Transactional
     public Film getById(Long id) {
         return filmRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementFoundException("Film with id: " + id, new Throwable()));
+                new NoSuchElementFoundException("Film with id: " + id + " isn't exist.", new Throwable()));
     }
 
     @Override

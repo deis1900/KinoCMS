@@ -33,25 +33,25 @@ public class RoomController {
     )
     @JsonView(Views.Internal.class)
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getRoomById(@PathVariable("id")
+    public ResponseEntity<?> getRoom(@PathVariable("id")
                                          @Parameter(description = "ID of room") Long id) {
 
         return new ResponseEntity<>(roomService.findById(id), HttpStatus.OK);
     }
 
-    @Operation(summary = "get list of cinema",
-            description = "get list of cinema or empty list"
+    @Operation(summary = "get list of room",
+            description = "get list of room or empty list"
     )
     @JsonView(Views.Internal.class)
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Room>> getListOfRoom() {
-        return new ResponseEntity<>(roomService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<Room>> getRoomList(@PathVariable String cinema) {
+        return new ResponseEntity<>(roomService.findAllByCinemaName(cinema), HttpStatus.OK);
     }
 
     @Operation(summary = " update room",
             description = "Update Room.Entity if those exists, else create new room."
     )
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/admin/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateRoom(@PathVariable("id") Long id, @Valid @RequestBody Room room) {
         logger.info("Update room with id " + id);
         Room roomDB = roomService.findById(id);
@@ -72,8 +72,8 @@ public class RoomController {
             summary = "delete room",
             description = "Delete room from database by id."
     )
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteSessions(@PathVariable("id") @Parameter(description = "id of room") Long id) {
+    @DeleteMapping(value = "/admin/{id}")
+    public ResponseEntity<?> deleteRoom(@PathVariable("id") @Parameter(description = "id of room") Long id) {
         logger.info("Fetching & Deleting Room with id " + id);
         Room roomDB = roomService.findById(id);
         if (roomDB == null) {

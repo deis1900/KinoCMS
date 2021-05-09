@@ -15,4 +15,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     Collection<Room> findByCinema_Id(Long id);
 
+    Collection<Room> findAllByCinema_Name(String name);
+
 }

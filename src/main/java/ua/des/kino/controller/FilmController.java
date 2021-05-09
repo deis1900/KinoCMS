@@ -24,7 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "film")
-@Tag(name = "Film_Controller", description = "Communicate with films.")
+@Tag(name = "Film_Controller", description = "Communicate with films(all changes only for administrator)")
 public class FilmController {
 
     private static final Logger logger =
@@ -71,7 +71,7 @@ public class FilmController {
             summary = "save new Film",
             description = "."
     )
-    @PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/admin", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> saveFilm(@Valid @RequestBody
                                           @Parameter(description = "Generated film.") Film film) {
         logger.info("Creating film " + film.getName());
@@ -90,7 +90,7 @@ public class FilmController {
             summary = "update film",
             description = "Save and flush film to db."
     )
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/admin/{id}")
     public ResponseEntity<?> updateFilm(@PathVariable("id") Long id, @Valid @RequestBody Film film) {
 
         logger.info("Update film with id " + id);
@@ -113,7 +113,7 @@ public class FilmController {
             summary = "delete film",
             description = "Delete Film from database by id."
     )
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(value = "/admin/{id}")
     public ResponseEntity<?> deleteCustomer(@PathVariable("id") Long id) {
         logger.info("Fetching & Deleting Film with id " + id);
         Film film = filmService.getById(id);

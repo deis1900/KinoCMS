@@ -17,9 +17,10 @@ public class Ticket implements Serializable {
 
     @JsonView(Views.Public.class)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @JsonView(Views.Custom.class)
     @NonNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "session_id", nullable = false)
@@ -29,12 +30,12 @@ public class Ticket implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Seat seat;
 
-    @JsonView(Views.Internal.class)
+    @JsonView(Views.Custom.class)
     @Column
     private Integer price;
 
     @JsonView(Views.Internal.class)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "booking_id")
     private Booking booking;
 
@@ -45,7 +46,6 @@ public class Ticket implements Serializable {
                 ", session=" + session +
                 ", seat=" + seat +
                 ", price=" + price +
-                ", booking=" + booking +
                 '}';
     }
 
@@ -55,12 +55,11 @@ public class Ticket implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Ticket ticket = (Ticket) o;
         return Objects.equals(id, ticket.id) && session.equals(ticket.session)
-                && Objects.equals(seat, ticket.seat) && Objects.equals(price, ticket.price)
-                && Objects.equals(booking, ticket.booking);
+                && Objects.equals(seat, ticket.seat) && Objects.equals(price, ticket.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, session, seat, price, booking);
+        return Objects.hash(id, session, seat, price);
     }
 }

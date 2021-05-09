@@ -3,6 +3,7 @@ package ua.des.kino.controller.admin;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping(value = "admin/session")
+@Tag(name = "Showtime_Controller", description = "Communicate with sessions.")
 public class ShowtimesController {
 
     private final Logger logger = LoggerFactory.getLogger(ShowtimesController.class.getName());
@@ -63,7 +65,7 @@ public class ShowtimesController {
     )
     @JsonView(Views.Public.class)
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateSessions(@PathVariable("id") Long id, @Valid @RequestBody Session session) {
+    public ResponseEntity<?> updateSession(@PathVariable("id") Long id, @Valid @RequestBody Session session) {
         logger.info("Update session with id " + id);
         Session sessionDB = showtimesService.findById(id);
 
@@ -91,6 +93,6 @@ public class ShowtimesController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         showtimesService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

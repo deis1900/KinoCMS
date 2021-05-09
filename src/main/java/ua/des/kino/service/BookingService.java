@@ -2,11 +2,8 @@ package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
 import ua.des.kino.model.Booking;
-import ua.des.kino.model.Ticket;
-import ua.des.kino.model.User;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public interface BookingService {
@@ -15,9 +12,8 @@ public interface BookingService {
 
     void cancelBooking(Long userId, Booking booking);
 
-    Long saveBooking(Booking booking);
+    Booking saveBooking(Booking booking);
 
-    Set<Ticket> buyTicket(Booking booking);
-
+    Booking buyTicket(Booking booking);
 
 }

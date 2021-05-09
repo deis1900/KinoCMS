@@ -20,5 +20,7 @@ public interface RoomService {
 
     List<Room> findAll();
 
+    List<Room> findAllByCinemaName(String cinema);
+
     Room findDuplicate(String name, Long id);
 }

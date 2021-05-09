@@ -4,6 +4,7 @@ import lombok.Data;
 import ua.des.kino.model.submodel.SeoType;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 
 @Data
 @Entity
@@ -20,6 +21,8 @@ public class Seo {
     @Enumerated
     private SeoType  type;
 
+    @Pattern(regexp = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\." +
+            "[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)")
     @Column
     private String url;
 

@@ -3,18 +3,17 @@ package ua.des.kino.service.implementation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.des.kino.model.Booking;
-import ua.des.kino.model.Ticket;
 import ua.des.kino.model.User;
 import ua.des.kino.model.submodel.UserDetails;
 import ua.des.kino.repository.UserRepository;
 import ua.des.kino.service.BookingService;
 import ua.des.kino.service.UserService;
+import ua.des.kino.util.exception_handler.EntityDataException;
 import ua.des.kino.util.exception_handler.EntityIdMismatchException;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -32,13 +31,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User getByLogin(String login) {
         return repository.findUserByLogin(login).orElseThrow(() ->
-                new NoSuchElementFoundException("User with login " + login + " is not found", new Throwable()));
+                new NoSuchElementFoundException("User with login " + login + " is not found.", new Throwable()));
     }
 
     @Override
     @Transactional
-    public Boolean isUserExist(User user) {
-        return repository.existsById(user.getId());
+    public Boolean isUserExist(Long id) {
+        return repository.existsById(id);
     }
 
     @Override
@@ -76,12 +75,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long toBookTickets(Booking booking) {
-        return bookingService.saveBooking(booking);
+    public Booking toBookTickets(Booking booking) {
+        if(isUserExist(booking.getUser().getId())){
+            return bookingService.saveBooking(booking);
+        }
+        throw new EntityDataException("User with id: " + booking.getUser().getId() + " isn't exist", new Throwable());
     }
 
     @Override
-    public Set<Ticket> buyTickets(Booking booking) {
+    public Booking buyTickets(Booking booking) {
         return bookingService.buyTicket(booking);
     }
 
@@ -92,7 +94,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void cancelBooking(Long userId, Booking booking) {
-        bookingService.cancelBooking(userId, booking);
+        if(userId.equals(booking.getUser().getId())) {
+            bookingService.cancelBooking(userId, booking);
+        } else throw new EntityIdMismatchException("User with id: " + userId + "." +
+                " Cannot cancel booking another user.", new Throwable());
     }
 
 }

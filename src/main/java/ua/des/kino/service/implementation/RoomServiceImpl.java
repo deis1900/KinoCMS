@@ -9,6 +9,7 @@ import ua.des.kino.repository.RoomRepository;
 import ua.des.kino.service.RoomService;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,6 +40,15 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     public Room findDuplicate(String name, Long id) {
         return roomRepository.findByNameAndCinema_Id(name, id);
+    }
+
+    @Override
+    public List<Room> findAllByCinemaName(String cinema) {
+        var rooms = roomRepository.findAllByCinema_Name(cinema);
+        if(rooms.isEmpty()){
+            throw new NoSuchElementFoundException("Cinema with name " + cinema + " haven't rooms", new Throwable());
+        }
+        return new ArrayList<>(rooms);
     }
 
     @Override

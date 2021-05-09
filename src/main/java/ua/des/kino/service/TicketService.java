@@ -5,6 +5,7 @@ import ua.des.kino.model.Session;
 import ua.des.kino.model.Ticket;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public interface TicketService {
@@ -20,4 +21,6 @@ public interface TicketService {
     List<Ticket> getSessionTickets(Session session);
 
     void delete(Long id);
+
+    Ticket verifyTicket(Ticket ticket);
 }

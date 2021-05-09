@@ -37,11 +37,6 @@ public class FilmDetails implements Serializable {
     @Column(table = "films_details")
     private Integer budget;
 
-    @NotBlank(message = "Quality is mandatory")
-    @Column(table = "films_details")
-    @Enumerated
-    private Quality quality;
-
     @NotBlank(message = "Genre is mandatory")
     @Enumerated(EnumType.STRING)
     private Genres genres;

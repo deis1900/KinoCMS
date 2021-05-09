@@ -9,6 +9,7 @@ import ua.des.kino.model.submodel.CinemaInfo;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
@@ -18,11 +19,11 @@ import java.util.Set;
 @Entity
 @Table(name = "cinema")
 @SecondaryTable(name = "cinema_info")
-public class Cinema {
+public class Cinema implements Serializable {
 
     @JsonView(Views.Public.class)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @JsonView(Views.Public.class)
@@ -34,7 +35,7 @@ public class Cinema {
     private String mainPhoto;
 
     @OneToMany(mappedBy = "cinema", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<Room> room;
+    private Set<Room> rooms;
 
     @JsonView(Views.Internal.class)
     @NotBlank(message = "Description about cinema is mandatory")

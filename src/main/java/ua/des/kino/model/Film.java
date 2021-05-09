@@ -2,19 +2,24 @@ package ua.des.kino.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ua.des.kino.config.Views;
 import ua.des.kino.model.submodel.FilmDetails;
+import ua.des.kino.model.submodel.Quality;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
 @NoArgsConstructor
+@Setter
+@Getter
 @Entity
 @Table(name = "films")
 @SecondaryTable(name = "films_details", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
@@ -46,6 +51,12 @@ public class Film implements Serializable {
 
     @Column(name = "video_type")
     private String videoType;
+
+    @JsonView(Views.Public.class)
+    @NotBlank(message = "Quality is mandatory")
+    @Column
+    @Enumerated
+    private Quality quality;
 
     @JsonView({Views.Internal.class})
     @Embedded

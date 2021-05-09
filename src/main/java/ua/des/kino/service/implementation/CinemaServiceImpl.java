@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class CinemaServiceImpl implements CinemaService {
 
-    public static final Logger logger = LoggerFactory.getLogger(ShowtimesServiceImpl.class.getName());
+    public static final Logger logger = LoggerFactory.getLogger(CinemaServiceImpl.class.getName());
 
     private final CinemaRepository cinemaRepository;
     private final RoomRepository roomRepository;
