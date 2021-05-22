@@ -2,9 +2,9 @@ package ua.des.kino.service.implementation;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.Booking;
-import ua.des.kino.model.Ticket;
-import ua.des.kino.repository.BookingRepository;
+import ua.des.kino.model.audience.Booking;
+import ua.des.kino.model.audience.Ticket;
+import ua.des.kino.repository.audience.BookingRepository;
 import ua.des.kino.service.BookingService;
 import ua.des.kino.service.TicketService;
 import ua.des.kino.util.exception_handler.EntityDataException;
@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
-
     private final TicketService ticketService;
+
     private final BookingRepository repository;
 
     public BookingServiceImpl(BookingRepository repository, TicketService ticketService) {
@@ -28,9 +28,16 @@ public class BookingServiceImpl implements BookingService {
         this.repository = repository;
     }
 
+    private Booking getBookingById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new NoSuchElementFoundException("Cannot buy ticket, because booking with id:"
+                                + id + " isn't exists.", new Throwable()));
+    }
+
     @Override
-    public List<Booking> findBookingListByUser(Long id) {
-        List<Booking> bookingList = repository.findAllByUser_Id(id);
+    public List<Booking> findBookingListByCustomer(Long id) {
+        List<Booking> bookingList = repository.findAllByCustomer_Id(id);
         if (bookingList.isEmpty()) {
             throw new NoSuchElementFoundException("User with id:" + id + " has no booking.", new Throwable());
         }
@@ -75,13 +82,13 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public void cancelBooking(Long userId, Booking booking) {
 
-        List<Booking> bookingList = repository.findAllByUser_Id(userId);
+        List<Booking> bookingList = repository.findAllByCustomer_Id(userId);
         if (bookingList.isEmpty()) {
             throw new NoSuchElementFoundException("User with id:" + userId + " has no booking.", new Throwable());
         }
         var list = bookingList.stream()
-                .filter(b -> b.getUser().getId().equals(userId))
-                .filter(b -> b.getUser().getId().equals(booking.getUser().getId()))
+                .filter(b -> b.getCustomer().getId().equals(userId))
+                .filter(b -> b.getCustomer().getId().equals(booking.getCustomer().getId()))
                 .filter(b -> b.getCreateDate().equals(booking.getCreateDate()))
                 .collect(Collectors.toList());
         if (!list.isEmpty()) {
@@ -108,12 +115,5 @@ public class BookingServiceImpl implements BookingService {
             }
         });
         return filtered;
-    }
-
-    private Booking getBookingById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() ->
-                        new NoSuchElementFoundException("Cannot buy ticket, because booking with id:"
-                                + id + " isn't exists.", new Throwable()));
     }
 }

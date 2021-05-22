@@ -11,8 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.des.kino.config.Views;
-import ua.des.kino.model.Cinema;
-import ua.des.kino.model.Room;
+import ua.des.kino.model.kino.Cinema;
+import ua.des.kino.model.kino.Room;
 import ua.des.kino.service.CinemaService;
 
 import javax.validation.Valid;
@@ -46,7 +46,7 @@ public class CinemaController {
             description = "get list of Cinema or empty list"
     )
     @JsonView(Views.Internal.class)
-    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Cinema>> getListOfCinema(){
         return new ResponseEntity<>(cinemaService.findAll(), HttpStatus.OK);
     }

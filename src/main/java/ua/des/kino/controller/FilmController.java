@@ -12,8 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.des.kino.config.Views;
-import ua.des.kino.model.Film;
-import ua.des.kino.model.Session;
+import ua.des.kino.model.audience.Film;
+import ua.des.kino.model.audience.Session;
 import ua.des.kino.service.FilmService;
 import ua.des.kino.service.ShowtimesService;
 import ua.des.kino.util.CustomErrorType;
@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "film")
+@RequestMapping(value = "/film")
 @Tag(name = "Film_Controller", description = "Communicate with films(all changes only for administrator)")
 public class FilmController {
 
@@ -42,7 +42,7 @@ public class FilmController {
             summary = "get all films",
             description = "."
     )
-    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Film>> getAllFilm() {
         List<Film> films = filmService.getFilmList();
         return new ResponseEntity<>(films, HttpStatus.OK);

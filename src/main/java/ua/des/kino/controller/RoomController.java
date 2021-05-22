@@ -10,14 +10,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.des.kino.config.Views;
-import ua.des.kino.model.Room;
+import ua.des.kino.model.kino.Room;
 import ua.des.kino.service.RoomService;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "{cinema}/room")
+@RequestMapping(value = "/room")
 public class RoomController {
 
     private final Logger logger = LoggerFactory.getLogger(RoomController.class.getName());
@@ -43,7 +43,7 @@ public class RoomController {
             description = "get list of room or empty list"
     )
     @JsonView(Views.Internal.class)
-    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{cinema}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Room>> getRoomList(@PathVariable String cinema) {
         return new ResponseEntity<>(roomService.findAllByCinemaName(cinema), HttpStatus.OK);
     }

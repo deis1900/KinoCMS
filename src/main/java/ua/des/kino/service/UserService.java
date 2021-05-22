@@ -1,33 +1,20 @@
 package ua.des.kino.service;
 
-import org.springframework.stereotype.Service;
-import ua.des.kino.model.Booking;
-import ua.des.kino.model.User;
+import ua.des.kino.model.audience.User;
 
 import java.util.List;
 
-@Service
-public interface UserService {
+public interface UserService  {
 
-    User getByLogin(String login);
-
-    Boolean isUserExist(Long id);
-
-    User getById(Long id);
+    List<User> findByUserWhereAccountNonLocked(Boolean varLock);
 
     List<User> findAll();
 
-    User save(User user);
+    void save(User user);
 
-    void updateUser(User user);
+    User findByEmail(String email);
 
-    void deleteUser(Long id);
+    User findByLogin(String Login);
 
-    List<Booking> bookingListByUser(Long id);
-
-    Booking toBookTickets(Booking booking);
-
-    Booking buyTickets(Booking booking);
-
-    void cancelBooking(Long userId, Booking booking);
+    String setUserToken(User user);
 }

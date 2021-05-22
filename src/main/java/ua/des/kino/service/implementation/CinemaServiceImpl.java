@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.Cinema;
-import ua.des.kino.model.Room;
-import ua.des.kino.repository.CinemaRepository;
-import ua.des.kino.repository.RoomRepository;
+import ua.des.kino.model.kino.Cinema;
+import ua.des.kino.model.kino.Room;
+import ua.des.kino.repository.kino.CinemaRepository;
+import ua.des.kino.repository.kino.RoomRepository;
 import ua.des.kino.service.CinemaService;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 

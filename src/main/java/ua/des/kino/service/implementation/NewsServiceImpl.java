@@ -2,9 +2,9 @@ package ua.des.kino.service.implementation;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.News;
-import ua.des.kino.model.submodel.NewsType;
-import ua.des.kino.repository.NewsRepository;
+import ua.des.kino.model.kino.News;
+import ua.des.kino.model.kino.submodel.NewsType;
+import ua.des.kino.repository.kino.NewsRepository;
 import ua.des.kino.service.NewsService;
 import ua.des.kino.util.exception_handler.EntityIdMismatchException;
 

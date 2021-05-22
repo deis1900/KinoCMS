@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.Session;
-import ua.des.kino.model.Ticket;
-import ua.des.kino.model.submodel.Quality;
-import ua.des.kino.repository.TicketRepository;
+import ua.des.kino.model.audience.Session;
+import ua.des.kino.model.audience.Ticket;
+import ua.des.kino.model.audience.submodel.Quality;
+import ua.des.kino.repository.audience.TicketRepository;
 import ua.des.kino.service.ShowtimesService;
 import ua.des.kino.service.TicketService;
 import ua.des.kino.util.exception_handler.EntityDataException;
@@ -50,7 +50,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public Ticket saveTicket(Ticket ticket) {
-        if(sessions.isEmpty()){
+        if (sessions.isEmpty()) {
             sessions = showtimesService.finAllSessions();
         }
         return ticketRepository.save(verifyTicket(ticket));
@@ -59,17 +59,18 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public List<Ticket> getSessionTickets(Session session) {
-        List<Ticket> tickets = ticketRepository.findAllBySession_Id(session.getId());
-        if(tickets.isEmpty()){
-            throw new EntityDataException("Session with id: " + session.getId() +" hasn't tickets.",
+        List<Ticket> tickets = ticketRepository.findAllBySessionId(session.getId());
+        if (tickets.isEmpty()) {
+            throw new EntityDataException("Session with id: " + session.getId() + " hasn't tickets.",
                     new Throwable());
         }
 
         List<Ticket> t = tickets.stream()
-                .peek(ticket -> ticket.setPrice(verifyPrice(session)))
+                .peek(ticket -> ticket.setSession(showtimesService.findById(ticket.getSessionId())))
+                .peek(ticket -> ticket.setPrice(choosePrice(session)))
                 .collect(Collectors.toList());
 
-        if(t.isEmpty()){
+        if (t.isEmpty()) {
             throw new EntityDataException("Tickets was empty", new Throwable());
         }
         return t;
@@ -84,24 +85,26 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public Ticket verifyTicket(Ticket ticket) {
-        if(sessions.isEmpty()){
-            sessions = showtimesService.finAllSessions();
-        }
-        Session session =  sessions.stream()
-                .filter(s -> ticket.getSession().getId().equals(s.getId()))
-                .findAny()
-                .orElseThrow(() -> new EntityDataException("Session isn't exist.", new Throwable()));
-        Integer price = verifyPrice(ticket.getSession());
 
-        if(verifySeat(ticket)) {
-            ticket.setPrice(price);
-            ticket.setSession(session);
-            return ticket;
-        } throw new EntityDataException("The seat " + ticket.getSeat().toString() + " was taken", new Throwable());
+        Session session = showtimesService.verifySessionAndSeat(ticket.getSessionId(), ticket.getSeat());
+        if (session == null) {
+        throw new EntityDataException("The session " + ticket.getSession().toString() + " isn't exists.",
+                    new Throwable());
+        }
+        ticket.setSession(session);
+
+        if (ticket.getSeat().getFree()) {
+            if (verifySeat(ticket)) {
+                ticket.setPrice(choosePrice(session));
+                return ticket;
+            }
+        } throw new EntityDataException("The seat is busy(seat ID is " + ticket.getSeat().getId(), new Throwable());
     }
 
-//    TODO Exclude a possibility of substitution of the price from frontend
-    private Integer verifyPrice(Session session){
+    /**
+     * price has hardcode in this example
+     */
+    private Integer choosePrice(Session session) {
         Quality filmQuality = session.getFilm().getQuality();
         int price = 80;
 
@@ -120,8 +123,18 @@ public class TicketServiceImpl implements TicketService {
         return price;
     }
 
-    // TODO insert verify seats
-    private Boolean verifySeat(Ticket ticket){
-        return true;
+    /**
+     * Verify Seat.newTicket and Seat from database on current session
+     */
+    private Boolean verifySeat(Ticket newTicket) {
+        List<Ticket> ticketBySession = ticketRepository.findAllBySessionId(newTicket.getId());
+        List<Ticket> duplicateTickets = ticketBySession.stream()
+                // check series new ticket and ticket from DB
+                .filter(t -> t.getSeat().getSeries().equals(newTicket.getSeat().getSeries()))
+                // check place new ticket and ticket from DB
+                .filter(t -> t.getSeat().getPlace().equals(newTicket.getSeat().getPlace()))
+                .collect(Collectors.toList());
+        return duplicateTickets.isEmpty();
     }
+
 }

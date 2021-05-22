@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.Film;
-import ua.des.kino.repository.FilmRepository;
+import ua.des.kino.model.audience.Film;
+import ua.des.kino.repository.audience.FilmRepository;
 import ua.des.kino.service.FilmService;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 

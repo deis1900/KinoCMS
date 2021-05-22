@@ -4,9 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.Room;
-import ua.des.kino.repository.RoomRepository;
+import ua.des.kino.model.audience.submodel.Seat;
+import ua.des.kino.model.kino.Room;
+import ua.des.kino.repository.kino.RoomRepository;
 import ua.des.kino.service.RoomService;
+import ua.des.kino.util.exception_handler.EntityDataException;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<Room> findAllByCinemaName(String cinema) {
         var rooms = roomRepository.findAllByCinema_Name(cinema);
-        if(rooms.isEmpty()){
+        if (rooms.isEmpty()) {
             throw new NoSuchElementFoundException("Cinema with name " + cinema + " haven't rooms", new Throwable());
         }
         return new ArrayList<>(rooms);
@@ -73,5 +75,21 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     public void delete(Long id) {
         roomRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean verifySeat(Seat seat, Long roomId) {
+        var roomDB = roomRepository.findById(roomId);
+        if (roomDB.isPresent()) {
+            var room = roomDB.get();
+            if (room.getSeries().equals(seat.getSeries())) {
+                if (room.getPlace().equals(seat.getPlace())) {
+                    return true;
+                } throw new EntityDataException("Non-existent place of seat on the ticket", new Throwable());
+            }
+            throw new EntityDataException("Non-existent series of seat on the ticket", new Throwable());
+        }
+        throw new NoSuchElementFoundException("Room with id " + roomId + " isn't exists.",
+                new Throwable());
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.des.kino.model.submodel.Photo;
+import ua.des.kino.model.audience.submodel.Photo;
 import ua.des.kino.service.PhotoService;
 import ua.des.kino.util.CustomErrorType;
 
@@ -112,7 +112,7 @@ public class AdminController {
             summary = "delete photo by Id",
             description = "delete photo By id"
     )
-    @DeleteMapping(value = "photo/{id}")
+    @DeleteMapping(value = "/photo/{id}")
     public ResponseEntity<?> deletePhotoById(@PathVariable @Parameter(description = "Valid ID from the DB") Long id) {
         logger.info("Fetching & Deleting Photo with id " + id);
         Photo photo = photoService.getPhotoById(id);

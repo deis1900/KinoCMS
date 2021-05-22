@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.des.kino.config.Views;
-import ua.des.kino.model.Session;
+import ua.des.kino.model.audience.Session;
 import ua.des.kino.service.ShowtimesService;
 
 import javax.validation.Valid;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = "admin/session")
+@RequestMapping(value = "/admin/session")
 @Tag(name = "Showtime_Controller", description = "Communicate with sessions.")
 public class ShowtimesController {
 
@@ -35,7 +35,7 @@ public class ShowtimesController {
             summary = "send Session list"
     )
     @JsonView(Views.Public.class)
-    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Session>> getListShowtimes() {
 
         return new ResponseEntity<>(showtimesService.finAllSessions(), HttpStatus.OK);

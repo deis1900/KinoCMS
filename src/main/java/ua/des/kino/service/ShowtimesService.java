@@ -1,7 +1,8 @@
 package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
-import ua.des.kino.model.Session;
+import ua.des.kino.model.audience.Session;
+import ua.des.kino.model.audience.submodel.Seat;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,4 +24,6 @@ public interface ShowtimesService {
     Session update(Session session);
 
     void delete(Long id);
+
+    Session verifySessionAndSeat(Long sessionId, Seat seat);
 }

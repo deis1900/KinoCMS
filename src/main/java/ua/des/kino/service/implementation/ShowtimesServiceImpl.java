@@ -4,10 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.Film;
-import ua.des.kino.model.Room;
-import ua.des.kino.model.Session;
-import ua.des.kino.repository.ShowtimeRepository;
+import ua.des.kino.model.audience.Film;
+import ua.des.kino.model.audience.submodel.Seat;
+import ua.des.kino.model.kino.Room;
+import ua.des.kino.model.audience.Session;
+import ua.des.kino.repository.audience.ShowtimeRepository;
 import ua.des.kino.service.FilmService;
 import ua.des.kino.service.RoomService;
 import ua.des.kino.service.ShowtimesService;
@@ -17,14 +18,16 @@ import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class ShowtimesServiceImpl implements ShowtimesService {
 
-    public static final Logger logger = LoggerFactory.getLogger(ShowtimesServiceImpl.class.getName());
+    public static final Logger LOGGER = LoggerFactory.getLogger(ShowtimesServiceImpl.class.getName());
 
     private final ShowtimeRepository showtimeRepository;
     private final FilmService filmService;
@@ -104,9 +107,9 @@ public class ShowtimesServiceImpl implements ShowtimesService {
         return sessionsIn.stream()
                 .filter(value -> reconcileDates(value, dbFilms))
                 .filter(value -> filmIds.contains(value.getFilm().getId()))
-                .filter(value -> roomIds.contains(value.getRoom().getId()))
+                .filter(value -> roomIds.contains(value.getRoomId()))
                 .filter(value -> isExistRoom(value, dbRooms))
-                .filter(value -> busyPlaceAndTime(value, dbSessions))
+                .filter(value -> checkRoomAndDateOfSession(value, dbSessions))
                 .collect(Collectors.toList());
     }
 
@@ -138,41 +141,58 @@ public class ShowtimesServiceImpl implements ShowtimesService {
 
     private boolean isExistRoom(Session session, List<Room> rooms) {
         for (Room room : rooms) {
-            if (room.getId().equals(session.getRoom().getId())) {
-                session.setRoom(room);
+            if (room.getId().equals(session.getRoomId())) {
+                session.setRoomId(room.getId());
                 return true;
             }
-        }
-
-        if (session.getRoom().getName().equals("")) {
-            throw new NoSuchElementFoundException("Room isn't exist.", new Throwable());
         }
         return false;
     }
 
-    private boolean busyPlaceAndTime(Session session, List<Session> sessions) {
-        for (Session s : sessions) {
-            if (s.getRoom().getId().equals(session.getRoom().getId())) {
-                if (s.getShowTime().equals(session.getShowTime())) {
-                    throw new EntityDataException(
-                            "The room - " + session.getRoom().getName() +
-                                    " in the cinema -" + session.getRoom().getCinema().getName() +
-                                    " is busy at " + session.getShowTime() + ".",
-                            new Throwable());
-                }
-//                TODO before film not finished new wouldn't start
-//                long filmDuration = s.getFilm().getDuration().getLong();
-//                long timeoutBetweenShowtimes = Duration.between(s.getShowTime(), session.getShowTime()).getSeconds();
-//                if ( timeoutBetweenShowtimes > filmDuration){
-//                    throw new EntityDataException(
-//                            "New session (" + session.getShowTime() + ")" +
-//                            " cannot begin before previous film (" + s.getShowTime() +
-//                            " duration " + s.getFilm().getDuration() + ") stopped.",
-//                            new Throwable());
-//                }
+    @Override
+    public Session verifySessionAndSeat(Long sessionId, Seat seat) {
+        Optional<Session> sessionDB = showtimeRepository.findById(sessionId);
+        if (sessionDB.isPresent()) {
+            if (checkSeatOccupied(sessionDB.get(), seat)) {
+                return sessionDB.get();
             }
         }
-        return true;
+        throw new EntityDataException("Cannot booking ticket (Session with id " + sessionId + " isn't exists).",
+                new Throwable());
+
+    }
+
+    private boolean checkSeatOccupied(Session session, Seat seat) {
+        return roomService.verifySeat(seat, session.getRoomId());
+    }
+
+    private boolean checkRoomAndDateOfSession(Session session, List<Session> sessions) {
+        var startNewShowtime = session.getShowTime();
+        var endNewShowtime = findEndShowtime(startNewShowtime, session.getFilm().getDuration());
+
+        List<Session> sessions1 = sessions.stream()
+                .filter(s -> s.getRoomId().equals(session.getRoomId()))
+                .filter(s -> s.getShowTime().equals(session.getShowTime()))
+                .filter(s -> {
+                            var start = s.getShowTime();
+                            var end = findEndShowtime(start, s.getFilm().getDuration());
+                            var less = end.isBefore(startNewShowtime);
+                            var after = start.isAfter(endNewShowtime);
+                            return less && after;
+                        }
+                ).collect(Collectors.toList());
+
+        LOGGER.info("There is a show in the room(new session between "
+                + startNewShowtime.toString() + " ; " + endNewShowtime.toString());
+        return sessions1.isEmpty();
+    }
+
+    LocalDateTime findEndShowtime(LocalDateTime start, LocalTime duration) {
+        long durationMinutes = duration.getMinute();
+        long durationHours = duration.getHour();
+
+        var end = start.plusHours(durationHours);
+        return end.plusMinutes(durationMinutes);
     }
 
 }

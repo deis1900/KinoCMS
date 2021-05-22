@@ -1,7 +1,8 @@
 package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
-import ua.des.kino.model.Room;
+import ua.des.kino.model.audience.submodel.Seat;
+import ua.des.kino.model.kino.Room;
 
 import java.util.List;
 
@@ -23,4 +24,6 @@ public interface RoomService {
     List<Room> findAllByCinemaName(String cinema);
 
     Room findDuplicate(String name, Long id);
+
+    boolean verifySeat(Seat seat, Long roomId);
 }

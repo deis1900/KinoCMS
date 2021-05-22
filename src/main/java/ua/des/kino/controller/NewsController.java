@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.des.kino.model.News;
+import ua.des.kino.model.kino.News;
 import ua.des.kino.service.NewsService;
 
 import javax.validation.Valid;
@@ -30,7 +30,7 @@ public class NewsController {
     @Operation(summary = "gives a list of news for 3 months ahead",
             description = "gives a list of news for 3 months ahead, date and time create on server!!!"
     )
-    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getCurrentNews(){
         List<News> newsList = newsService.getCurrentNewsList();
         if(newsList.isEmpty()){

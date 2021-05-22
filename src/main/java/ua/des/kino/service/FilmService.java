@@ -1,7 +1,7 @@
 package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
-import ua.des.kino.model.Film;
+import ua.des.kino.model.audience.Film;
 
 
 import java.util.List;

@@ -11,15 +11,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.des.kino.config.Views;
-import ua.des.kino.model.Session;
-import ua.des.kino.model.Ticket;
+import ua.des.kino.model.audience.Session;
+import ua.des.kino.model.audience.Ticket;
 import ua.des.kino.service.TicketService;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "admin/ticket")
+@RequestMapping(value = "/admin/ticket")
 @Tag(name = "Ticket_Controller", description = "Communicate with tickets(only for administrator)")
 public class TicketController {
 
@@ -45,7 +45,7 @@ public class TicketController {
             summary = "get Ticket list"
     )
     @JsonView(Views.Custom.class)
-    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Ticket>> getListTickets() {
 
         return new ResponseEntity<>(ticketService.getAll(), HttpStatus.OK);
