@@ -1,11 +1,10 @@
 package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
-import ua.des.kino.model.Session;
-import ua.des.kino.model.Ticket;
+import ua.des.kino.model.mysql.Session;
+import ua.des.kino.model.postgres.Ticket;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public interface TicketService {

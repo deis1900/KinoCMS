@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.Room;
-import ua.des.kino.repository.RoomRepository;
+import ua.des.kino.model.mysql.Room;
+import ua.des.kino.repository.mysql.RoomRepository;
 import ua.des.kino.service.RoomService;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 

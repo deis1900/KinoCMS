@@ -1,7 +1,7 @@
 package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
-import ua.des.kino.model.News;
+import ua.des.kino.model.mysql.News;
 
 import java.util.List;
 

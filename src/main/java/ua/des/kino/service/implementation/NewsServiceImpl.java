@@ -2,9 +2,9 @@ package ua.des.kino.service.implementation;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.News;
-import ua.des.kino.model.submodel.NewsType;
-import ua.des.kino.repository.NewsRepository;
+import ua.des.kino.model.mysql.News;
+import ua.des.kino.model.mysql.submodel.NewsType;
+import ua.des.kino.repository.mysql.NewsRepository;
 import ua.des.kino.service.NewsService;
 import ua.des.kino.util.exception_handler.EntityIdMismatchException;
 
@@ -55,13 +55,11 @@ public class NewsServiceImpl implements NewsService {
                         new EntityIdMismatchException("News with id " + id + " isn't exist. ", new Throwable()));
     }
 
-    @Override
     @Transactional
     public News createNews(News news) {
         return newsRepository.save(news);
     }
 
-    @Override
     @Transactional
     public void updateNews(News news) {
         newsRepository.saveAndFlush(news);

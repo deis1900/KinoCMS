@@ -1,8 +1,8 @@
 package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
-import ua.des.kino.model.Booking;
-import ua.des.kino.model.User;
+import ua.des.kino.model.postgres.Booking;
+import ua.des.kino.model.postgres.User;
 
 import java.util.List;
 

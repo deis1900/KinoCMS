@@ -1,10 +1,10 @@
 package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
-import ua.des.kino.model.Film;
-
+import ua.des.kino.model.mysql.Film;
 
 import java.util.List;
+
 
 @Service
 public interface FilmService {

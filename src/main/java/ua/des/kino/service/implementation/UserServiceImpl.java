@@ -2,10 +2,10 @@ package ua.des.kino.service.implementation;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.Booking;
-import ua.des.kino.model.User;
-import ua.des.kino.model.submodel.UserDetails;
-import ua.des.kino.repository.UserRepository;
+import ua.des.kino.model.postgres.Booking;
+import ua.des.kino.model.postgres.User;
+import ua.des.kino.model.postgres.submodel.UserDetails;
+import ua.des.kino.repository.postgres.UserRepository;
 import ua.des.kino.service.BookingService;
 import ua.des.kino.service.UserService;
 import ua.des.kino.util.exception_handler.EntityDataException;
