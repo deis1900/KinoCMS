@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.des.kino.config.Views;
-import ua.des.kino.model.Room;
+import ua.des.kino.model.mysql.Room;
 import ua.des.kino.service.RoomService;
 
 import javax.validation.Valid;

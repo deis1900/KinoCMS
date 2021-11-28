@@ -11,8 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.des.kino.config.Views;
-import ua.des.kino.model.Session;
-import ua.des.kino.model.Ticket;
+import ua.des.kino.model.mysql.Session;
+import ua.des.kino.model.postgres.Ticket;
 import ua.des.kino.service.TicketService;
 
 import javax.validation.Valid;

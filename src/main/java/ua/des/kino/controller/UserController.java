@@ -11,9 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.des.kino.config.Views;
-import ua.des.kino.model.Booking;
-import ua.des.kino.model.Ticket;
-import ua.des.kino.model.User;
+import ua.des.kino.model.postgres.Booking;
+import ua.des.kino.model.postgres.User;
 import ua.des.kino.service.UserService;
 import ua.des.kino.util.CustomErrorType;
 

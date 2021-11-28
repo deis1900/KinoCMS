@@ -1,7 +1,7 @@
 package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
-import ua.des.kino.model.submodel.Photo;
+import ua.des.kino.model.mysql.Photo;
 
 import java.util.List;
 

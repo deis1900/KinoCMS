@@ -2,8 +2,8 @@ package ua.des.kino.service.implementation;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.submodel.Photo;
-import ua.des.kino.repository.PhotoRepository;
+import ua.des.kino.model.mysql.Photo;
+import ua.des.kino.repository.mysql.PhotoRepository;
 import ua.des.kino.service.PhotoService;
 import ua.des.kino.util.exception_handler.NoSuchElementFoundException;
 

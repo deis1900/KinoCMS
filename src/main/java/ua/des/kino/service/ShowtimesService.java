@@ -1,7 +1,7 @@
 package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
-import ua.des.kino.model.Session;
+import ua.des.kino.model.mysql.Session;
 
 import java.time.LocalDateTime;
 import java.util.List;

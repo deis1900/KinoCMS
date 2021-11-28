@@ -1,8 +1,8 @@
 package ua.des.kino.service;
 
 import org.springframework.stereotype.Service;
-import ua.des.kino.model.Cinema;
-import ua.des.kino.model.Room;
+import ua.des.kino.model.mysql.Cinema;
+import ua.des.kino.model.mysql.Room;
 
 import java.util.List;
 

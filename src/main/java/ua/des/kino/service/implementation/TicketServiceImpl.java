@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.des.kino.model.Session;
-import ua.des.kino.model.Ticket;
-import ua.des.kino.model.submodel.Quality;
-import ua.des.kino.repository.TicketRepository;
+import ua.des.kino.model.mysql.Session;
+import ua.des.kino.model.mysql.submodel.Quality;
+import ua.des.kino.model.postgres.Ticket;
+import ua.des.kino.repository.postgres.TicketRepository;
 import ua.des.kino.service.ShowtimesService;
 import ua.des.kino.service.TicketService;
 import ua.des.kino.util.exception_handler.EntityDataException;
@@ -59,7 +59,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional
     public List<Ticket> getSessionTickets(Session session) {
-        List<Ticket> tickets = ticketRepository.findAllBySession_Id(session.getId());
+        List<Ticket> tickets = ticketRepository.findAllBySessionId(session.getId());
         if(tickets.isEmpty()){
             throw new EntityDataException("Session with id: " + session.getId() +" hasn't tickets.",
                     new Throwable());

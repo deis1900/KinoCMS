@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.des.kino.model.News;
+import ua.des.kino.model.mysql.News;
 import ua.des.kino.service.NewsService;
 
 import javax.validation.Valid;

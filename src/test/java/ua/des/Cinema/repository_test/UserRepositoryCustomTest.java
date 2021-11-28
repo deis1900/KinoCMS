@@ -1,28 +1,18 @@
 package ua.des.Cinema.repository_test;
 
-import org.hibernate.LazyInitializationException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 import ua.des.kino.CinemaApplication;
-import ua.des.kino.repository.UserRepository;
-import ua.des.kino.model.User;
-import ua.des.kino.model.submodel.Sex;
-import ua.des.kino.model.submodel.UserContact;
-import ua.des.kino.model.submodel.UserDetails;
-import ua.des.kino.model.submodel.UserLang;
+import ua.des.kino.model.postgres.User;
+import ua.des.kino.model.postgres.submodel.Sex;
+import ua.des.kino.model.postgres.submodel.UserContact;
+import ua.des.kino.model.postgres.submodel.UserDetails;
+import ua.des.kino.model.postgres.submodel.UserLang;
+import ua.des.kino.repository.postgres.UserRepository;
 
 import java.time.LocalDate;
-import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CinemaApplication.class)
